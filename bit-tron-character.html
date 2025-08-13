@@ -362,7 +362,18 @@
             let count = 0;
             const maxCount = 5;
             
-            const interval = setInterval(() => {
+            // Determine proper timing based on audio duration
+            const yesAudio = document.getElementById('yesSound');
+            const noAudio = document.getElementById('noSound');
+            const yesDuration = yesAudio.duration || 0.7; // fallback to 0.7s
+            const noDuration = noAudio.duration || 0.52;  // fallback to 0.52s
+            
+            // Add small buffer to ensure clean separation
+            const yesInterval = (yesDuration * 1000) + 100; // duration + 100ms buffer
+            const noInterval = (noDuration * 1000) + 100;   // duration + 100ms buffer
+            const interval = responses ? yesInterval : noInterval;
+            
+            const timer = setInterval(() => {
                 if (responses) {
                     sayYes();
                     document.getElementById('status').textContent = 'YES! '.repeat(count + 1);
@@ -373,13 +384,13 @@
                 
                 count++;
                 if (count >= maxCount) {
-                    clearInterval(interval);
+                    clearInterval(timer);
                     setTimeout(() => {
                         document.getElementById('status').textContent = '';
                         document.getElementById('bitShape').className = 'shape neutral';
-                    }, 1000);
+                    }, 1500);
                 }
-            }, 300);
+            }, interval);
         }
 
         // Add keyboard controls
