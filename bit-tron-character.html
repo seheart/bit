@@ -362,8 +362,16 @@
             let count = 0;
             const maxCount = 6; // More repetitions for excitement
             
-            // Speed up the audio playback for excited mode
-            const speedMultiplier = 1.33; // 33% faster (0.75x duration)
+            // Calculate proper timing for sped-up audio
+            const yesAudio = document.getElementById('yesSound');
+            const noAudio = document.getElementById('noSound');
+            const yesDuration = (yesAudio.duration || 0.7) / 1.33; // Faster duration
+            const noDuration = (noAudio.duration || 0.52) / 1.33;  // Faster duration
+            
+            // Add buffer and convert to milliseconds
+            const yesInterval = (yesDuration * 1000) + 50; // Small buffer for clean separation
+            const noInterval = (noDuration * 1000) + 50;
+            const interval = responses ? yesInterval : noInterval;
             
             const timer = setInterval(() => {
                 if (responses) {
@@ -382,7 +390,7 @@
                         document.getElementById('bitShape').className = 'shape neutral';
                     }, 1500);
                 }
-            }, 400); // Fixed faster interval for excited mode
+            }, interval); // Dynamic interval based on actual sped-up duration
         }
         
         // Excited versions with faster playback
