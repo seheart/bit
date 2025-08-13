@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit from TRON - Interactive Character</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #001133, #000011);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        /* Grid effect background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: grid-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes grid-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.1; }
+        }
+
+        #bit {
+            width: 150px;
+            height: 150px;
+            margin: 50px auto;
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #bit:hover {
+            transform: scale(1.1);
+        }
+
+        /* Neutral state - polyhedron */
+        .polyhedron {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            animation: float 3s ease-in-out infinite, rotate 8s linear infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+        }
+
+        /* Shape states */
+        .shape {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Neutral dodecahedron-like shape */
+        .neutral {
+            background: linear-gradient(45deg, #00ffff, #0088ff);
+            clip-path: polygon(
+                50% 0%, 80% 20%, 100% 50%, 
+                80% 80%, 50% 100%, 20% 80%, 
+                0% 50%, 20% 20%
+            );
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
+            animation: pulse-neutral 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-neutral {
+            0%, 100% { 
+                filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
+                transform: scale(1);
+            }
+            50% { 
+                filter: drop-shadow(0 0 35px rgba(0, 255, 255, 1));
+                transform: scale(1.05);
+            }
+        }
+
+        /* Yes state - octahedron */
+        .yes {
+            background: linear-gradient(45deg, #ffff00, #ffaa00);
+            clip-path: polygon(
+                50% 0%, 100% 50%, 50% 100%, 0% 50%
+            );
+            filter: drop-shadow(0 0 30px rgba(255, 255, 0, 1));
+            animation: pulse-yes 0.5s ease-out;
+            transform: scale(1.2);
+        }
+
+        @keyframes pulse-yes {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.5) rotate(180deg); }
+            100% { transform: scale(1.2) rotate(360deg); }
+        }
+
+        /* No state - stellated icosahedron */
+        .no {
+            background: linear-gradient(45deg, #ff0000, #cc0000);
+            clip-path: polygon(
+                50% 0%, 60% 35%, 98% 35%, 68% 57%,
+                79% 91%, 50% 70%, 21% 91%, 32% 57%,
+                2% 35%, 40% 35%
+            );
+            filter: drop-shadow(0 0 30px rgba(255, 0, 0, 1));
+            animation: pulse-no 0.5s ease-out;
+            transform: scale(1.3);
+        }
+
+        @keyframes pulse-no {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.4) rotate(-90deg); }
+            50% { transform: scale(1.2) rotate(90deg); }
+            75% { transform: scale(1.4) rotate(-90deg); }
+            100% { transform: scale(1.3) rotate(0deg); }
+        }
+
+        .controls {
+            margin-top: 40px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #0088ff, #00ffff);
+            border: 2px solid #00ffff;
+            color: white;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #00ffff, #0088ff);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        .status {
+            color: #00ffff;
+            font-size: 24px;
+            margin-top: 20px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+            min-height: 30px;
+        }
+
+        .instructions {
+            color: #00ffff;
+            margin-bottom: 20px;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        /* Particle effects */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00ffff;
+            pointer-events: none;
+            animation: particle-float 2s linear forwards;
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) scale(0);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="container">
+        <h1 style="color: #00ffff; text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);">BIT</h1>
+        <div class="instructions">Click Bit or use the buttons to interact</div>
+        
+        <div id="bit" onclick="randomResponse()">
+            <div class="polyhedron">
+                <div id="bitShape" class="shape neutral"></div>
+            </div>
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <div class="controls">
+            <button onclick="sayYes()">Ask a Question (Yes)</button>
+            <button onclick="sayNo()">Ask a Question (No)</button>
+            <button onclick="rapidResponse()">Excite Bit!</button>
+        </div>
+    </div>
+
+    <!-- Audio elements for actual Bit sounds -->
+    <audio id="noSound" preload="auto">
+        <source src="bit-no.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="yesSound" preload="auto">
+        <source src="bit-yes.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Create audio context for sound generation (fallback)
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Play actual sound files with fallback
+        function playYesSound() {
+            const yesAudio = document.getElementById('yesSound');
+            yesAudio.currentTime = 0;
+            yesAudio.play().catch(() => {
+                // Fallback to generated sound if file fails
+                playGeneratedYesSound();
+            });
+        }
+        
+        function playNoSound() {
+            const noAudio = document.getElementById('noSound');
+            noAudio.currentTime = 0;
+            noAudio.play().catch(() => {
+                // Fallback to generated sound
+                playGeneratedNoSound();
+            });
+        }
+        
+        // Generated sound fallbacks
+        function playGeneratedYesSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+        
+        function playGeneratedNoSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.type = 'square';
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        // Create particle effects
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.background = color;
+                particle.style.setProperty('--x', (Math.random() - 0.5) * 200 + 'px');
+                particle.style.setProperty('--y', (Math.random() - 0.5) * 200 + 'px');
+                document.body.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        function sayYes() {
+            const shape = document.getElementById('bitShape');
+            const status = document.getElementById('status');
+            
+            shape.className = 'shape yes';
+            status.textContent = 'YES!';
+            status.style.color = '#ffff00';
+            playYesSound();
+            
+            // Create yellow particles
+            const bit = document.getElementById('bit');
+            const rect = bit.getBoundingClientRect();
+            createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ffff00');
+            
+            setTimeout(() => {
+                shape.className = 'shape neutral';
+                status.textContent = '';
+            }, 1500);
+        }
+
+        function sayNo() {
+            const shape = document.getElementById('bitShape');
+            const status = document.getElementById('status');
+            
+            shape.className = 'shape no';
+            status.textContent = 'NO!';
+            status.style.color = '#ff0000';
+            playNoSound();
+            
+            // Create red particles
+            const bit = document.getElementById('bit');
+            const rect = bit.getBoundingClientRect();
+            createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ff0000');
+            
+            setTimeout(() => {
+                shape.className = 'shape neutral';
+                status.textContent = '';
+            }, 1500);
+        }
+
+        function randomResponse() {
+            if (Math.random() > 0.5) {
+                sayYes();
+            } else {
+                sayNo();
+            }
+        }
+
+        function rapidResponse() {
+            const responses = Math.random() > 0.5;
+            let count = 0;
+            const maxCount = 5;
+            
+            const interval = setInterval(() => {
+                if (responses) {
+                    sayYes();
+                    document.getElementById('status').textContent = 'YES! '.repeat(count + 1);
+                } else {
+                    sayNo();
+                    document.getElementById('status').textContent = 'NO! '.repeat(count + 1);
+                }
+                
+                count++;
+                if (count >= maxCount) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('status').textContent = '';
+                        document.getElementById('bitShape').className = 'shape neutral';
+                    }, 1000);
+                }
+            }, 300);
+        }
+
+        // Add keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'y' || e.key === 'Y') sayYes();
+            if (e.key === 'n' || e.key === 'N') sayNo();
+            if (e.key === ' ') randomResponse();
+            if (e.key === 'e' || e.key === 'E') rapidResponse();
+        });
+
+        // Initial animation
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('status').textContent = 'Ready to respond!';
+                document.getElementById('status').style.color = '#00ffff';
+                setTimeout(() => {
+                    document.getElementById('status').textContent = '';
+                }, 2000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>
