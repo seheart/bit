@@ -360,25 +360,17 @@
         function rapidResponse() {
             const responses = Math.random() > 0.5;
             let count = 0;
-            const maxCount = 5;
+            const maxCount = 6; // More repetitions for excitement
             
-            // Determine proper timing based on audio duration
-            const yesAudio = document.getElementById('yesSound');
-            const noAudio = document.getElementById('noSound');
-            const yesDuration = yesAudio.duration || 0.7; // fallback to 0.7s
-            const noDuration = noAudio.duration || 0.52;  // fallback to 0.52s
-            
-            // Add small buffer to ensure clean separation
-            const yesInterval = (yesDuration * 1000) + 100; // duration + 100ms buffer
-            const noInterval = (noDuration * 1000) + 100;   // duration + 100ms buffer
-            const interval = responses ? yesInterval : noInterval;
+            // Speed up the audio playback for excited mode
+            const speedMultiplier = 1.33; // 33% faster (0.75x duration)
             
             const timer = setInterval(() => {
                 if (responses) {
-                    sayYes();
+                    sayYesExcited();
                     document.getElementById('status').textContent = 'YES! '.repeat(count + 1);
                 } else {
-                    sayNo();
+                    sayNoExcited();
                     document.getElementById('status').textContent = 'NO! '.repeat(count + 1);
                 }
                 
@@ -390,7 +382,60 @@
                         document.getElementById('bitShape').className = 'shape neutral';
                     }, 1500);
                 }
-            }, interval);
+            }, 400); // Fixed faster interval for excited mode
+        }
+        
+        // Excited versions with faster playback
+        function sayYesExcited() {
+            const yesAudio = document.getElementById('yesSound');
+            yesAudio.currentTime = 0;
+            yesAudio.playbackRate = 1.33; // 33% faster
+            yesAudio.play().catch(() => {
+                playGeneratedYesSound();
+            });
+            
+            // Visual effects
+            const shape = document.getElementById('bitShape');
+            const status = document.getElementById('status');
+            
+            shape.className = 'shape yes';
+            status.style.color = '#ffff00';
+            
+            // Create particles
+            const bit = document.getElementById('bit');
+            const rect = bit.getBoundingClientRect();
+            createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ffff00');
+            
+            setTimeout(() => {
+                shape.className = 'shape neutral';
+                yesAudio.playbackRate = 1.0; // Reset playback rate
+            }, 600); // Shorter visual duration for excited mode
+        }
+        
+        function sayNoExcited() {
+            const noAudio = document.getElementById('noSound');
+            noAudio.currentTime = 0;
+            noAudio.playbackRate = 1.33; // 33% faster
+            noAudio.play().catch(() => {
+                playGeneratedNoSound();
+            });
+            
+            // Visual effects
+            const shape = document.getElementById('bitShape');
+            const status = document.getElementById('status');
+            
+            shape.className = 'shape no';
+            status.style.color = '#ff0000';
+            
+            // Create particles
+            const bit = document.getElementById('bit');
+            const rect = bit.getBoundingClientRect();
+            createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ff0000');
+            
+            setTimeout(() => {
+                shape.className = 'shape neutral';
+                noAudio.playbackRate = 1.0; // Reset playback rate
+            }, 450); // Shorter visual duration for excited mode
         }
 
         // Add keyboard controls
