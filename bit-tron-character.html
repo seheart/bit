@@ -360,18 +360,15 @@
         function rapidResponse() {
             const responses = Math.random() > 0.5;
             let count = 0;
-            const maxCount = 6; // More repetitions for excitement
+            const maxCount = 5; // Perfect excitement count
             
-            // Calculate proper timing for sped-up audio
-            const yesAudio = document.getElementById('yesSound');
-            const noAudio = document.getElementById('noSound');
-            const yesDuration = (yesAudio.duration || 0.7) / 1.33; // Faster duration
-            const noDuration = (noAudio.duration || 0.52) / 1.33;  // Faster duration
+            // Both sounds are now same duration (0.52s), so uniform timing
+            const baseDuration = 0.52; // Both YES and NO are now 0.52s
+            const speedMultiplier = 1.33; // 33% faster playback
+            const excitedDuration = baseDuration / speedMultiplier; // ~0.39s
             
             // Add buffer and convert to milliseconds
-            const yesInterval = (yesDuration * 1000) + 50; // Small buffer for clean separation
-            const noInterval = (noDuration * 1000) + 50;
-            const interval = responses ? yesInterval : noInterval;
+            const interval = (excitedDuration * 1000) + 50; // ~440ms for clean separation
             
             const timer = setInterval(() => {
                 if (responses) {
