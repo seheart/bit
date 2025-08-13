@@ -50,6 +50,7 @@
             transform-style: preserve-3d;
             cursor: pointer;
             transition: transform 0.3s ease;
+            perspective: 800px;
         }
 
         #bit:hover {
@@ -74,25 +75,56 @@
             100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
         }
 
-        /* Shape states */
+        /* 3D Polyhedron Container */
         .shape {
             width: 100%;
             height: 100%;
             position: absolute;
+            transform-style: preserve-3d;
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        /* Neutral dodecahedron-like shape */
+        /* Individual Polyhedron Faces */
+        .polyhedron-face {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.6), rgba(0, 255, 255, 0.2));
+            border-color: #00ffff;
+            box-shadow: 
+                inset 0 0 20px rgba(0, 255, 255, 0.8),
+                0 0 10px rgba(0, 255, 255, 0.4);
+            backface-visibility: visible;
+            transform-origin: center center;
+        }
+
+        /* Neutral state - Icosahedron (20 triangular faces) */
         .neutral {
-            background: linear-gradient(45deg, #00ffff, #0088ff);
-            clip-path: polygon(
-                50% 0%, 80% 20%, 100% 50%, 
-                80% 80%, 50% 100%, 20% 80%, 
-                0% 50%, 20% 20%
-            );
-            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
             animation: pulse-neutral 2s ease-in-out infinite;
         }
+
+        .neutral .polyhedron-face {
+            background: rgba(0, 255, 255, 0.4);
+            border-color: #00ffff;
+            box-shadow: 
+                inset 0 0 20px rgba(0, 255, 255, 0.8),
+                0 0 30px rgba(0, 255, 255, 0.6);
+        }
+
+        /* Icosahedron face positions (simplified 12-face approximation) */
+        .neutral .face-1 { transform: rotateY(0deg) translateZ(50px) rotateX(26.57deg); }
+        .neutral .face-2 { transform: rotateY(72deg) translateZ(50px) rotateX(26.57deg); }
+        .neutral .face-3 { transform: rotateY(144deg) translateZ(50px) rotateX(26.57deg); }
+        .neutral .face-4 { transform: rotateY(216deg) translateZ(50px) rotateX(26.57deg); }
+        .neutral .face-5 { transform: rotateY(288deg) translateZ(50px) rotateX(26.57deg); }
+        .neutral .face-6 { transform: rotateY(36deg) translateZ(50px) rotateX(-26.57deg); }
+        .neutral .face-7 { transform: rotateY(108deg) translateZ(50px) rotateX(-26.57deg); }
+        .neutral .face-8 { transform: rotateY(180deg) translateZ(50px) rotateX(-26.57deg); }
+        .neutral .face-9 { transform: rotateY(252deg) translateZ(50px) rotateX(-26.57deg); }
+        .neutral .face-10 { transform: rotateY(324deg) translateZ(50px) rotateX(-26.57deg); }
+        .neutral .face-11 { transform: rotateX(90deg) translateZ(30px); }
+        .neutral .face-12 { transform: rotateX(-90deg) translateZ(30px); }
 
         @keyframes pulse-neutral {
             0%, 100% { 
@@ -105,42 +137,73 @@
             }
         }
 
-        /* Yes state - octahedron */
+        /* Yes state - Octahedron (8 faces) */
         .yes {
-            background: linear-gradient(45deg, #ffff00, #ffaa00);
-            clip-path: polygon(
-                50% 0%, 100% 50%, 50% 100%, 0% 50%
-            );
-            filter: drop-shadow(0 0 30px rgba(255, 255, 0, 1));
             animation: pulse-yes 0.5s ease-out;
             transform: scale(1.2);
         }
 
-        @keyframes pulse-yes {
-            0% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.5) rotate(180deg); }
-            100% { transform: scale(1.2) rotate(360deg); }
+        .yes .polyhedron-face {
+            background: rgba(255, 255, 0, 0.4);
+            border-color: #ffff00;
+            box-shadow: 
+                inset 0 0 20px rgba(255, 255, 0, 0.8),
+                0 0 30px rgba(255, 255, 0, 0.8);
         }
 
-        /* No state - stellated icosahedron */
+        /* Octahedron face positions */
+        .yes .face-1 { transform: rotateY(0deg) rotateX(45deg) translateZ(35px); }
+        .yes .face-2 { transform: rotateY(90deg) rotateX(45deg) translateZ(35px); }
+        .yes .face-3 { transform: rotateY(180deg) rotateX(45deg) translateZ(35px); }
+        .yes .face-4 { transform: rotateY(270deg) rotateX(45deg) translateZ(35px); }
+        .yes .face-5 { transform: rotateY(0deg) rotateX(-45deg) translateZ(35px); }
+        .yes .face-6 { transform: rotateY(90deg) rotateX(-45deg) translateZ(35px); }
+        .yes .face-7 { transform: rotateY(180deg) rotateX(-45deg) translateZ(35px); }
+        .yes .face-8 { transform: rotateY(270deg) rotateX(-45deg) translateZ(35px); }
+
+        @keyframes pulse-yes {
+            0% { transform: scale(1) rotateY(0deg); }
+            50% { transform: scale(1.5) rotateY(180deg); }
+            100% { transform: scale(1.2) rotateY(360deg); }
+        }
+
+        /* No state - Stellated Icosahedron (spiky) */
         .no {
-            background: linear-gradient(45deg, #ff0000, #cc0000);
-            clip-path: polygon(
-                50% 0%, 60% 35%, 98% 35%, 68% 57%,
-                79% 91%, 50% 70%, 21% 91%, 32% 57%,
-                2% 35%, 40% 35%
-            );
-            filter: drop-shadow(0 0 30px rgba(255, 0, 0, 1));
             animation: pulse-no 0.5s ease-out;
             transform: scale(1.3);
         }
 
+        .no .polyhedron-face {
+            background: rgba(255, 0, 0, 0.4);
+            border-color: #ff0000;
+            box-shadow: 
+                inset 0 0 20px rgba(255, 0, 0, 0.8),
+                0 0 30px rgba(255, 0, 0, 0.8);
+            width: 60px;
+            height: 20px; /* Spiky triangular shape */
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        /* Stellated icosahedron - spikes extending outward */
+        .no .face-1 { transform: rotateY(0deg) translateZ(45px) rotateX(15deg); }
+        .no .face-2 { transform: rotateY(72deg) translateZ(45px) rotateX(15deg); }
+        .no .face-3 { transform: rotateY(144deg) translateZ(45px) rotateX(15deg); }
+        .no .face-4 { transform: rotateY(216deg) translateZ(45px) rotateX(15deg); }
+        .no .face-5 { transform: rotateY(288deg) translateZ(45px) rotateX(15deg); }
+        .no .face-6 { transform: rotateY(36deg) translateZ(45px) rotateX(-15deg); }
+        .no .face-7 { transform: rotateY(108deg) translateZ(45px) rotateX(-15deg); }
+        .no .face-8 { transform: rotateY(180deg) translateZ(45px) rotateX(-15deg); }
+        .no .face-9 { transform: rotateY(252deg) translateZ(45px) rotateX(-15deg); }
+        .no .face-10 { transform: rotateY(324deg) translateZ(45px) rotateX(-15deg); }
+        .no .face-11 { transform: rotateX(60deg) translateZ(40px); }
+        .no .face-12 { transform: rotateX(-60deg) translateZ(40px); }
+
         @keyframes pulse-no {
-            0% { transform: scale(1) rotate(0deg); }
-            25% { transform: scale(1.4) rotate(-90deg); }
-            50% { transform: scale(1.2) rotate(90deg); }
-            75% { transform: scale(1.4) rotate(-90deg); }
-            100% { transform: scale(1.3) rotate(0deg); }
+            0% { transform: scale(1) rotateY(0deg); }
+            25% { transform: scale(1.4) rotateY(-90deg); }
+            50% { transform: scale(1.2) rotateY(90deg); }
+            75% { transform: scale(1.4) rotateY(-90deg); }
+            100% { transform: scale(1.3) rotateY(0deg); }
         }
 
         .controls {
@@ -212,7 +275,21 @@
         
         <div id="bit" onclick="randomResponse()">
             <div class="polyhedron">
-                <div id="bitShape" class="shape neutral"></div>
+                <div id="bitShape" class="shape neutral">
+                    <!-- Polyhedron faces for 3D geometry -->
+                    <div class="polyhedron-face face-1"></div>
+                    <div class="polyhedron-face face-2"></div>
+                    <div class="polyhedron-face face-3"></div>
+                    <div class="polyhedron-face face-4"></div>
+                    <div class="polyhedron-face face-5"></div>
+                    <div class="polyhedron-face face-6"></div>
+                    <div class="polyhedron-face face-7"></div>
+                    <div class="polyhedron-face face-8"></div>
+                    <div class="polyhedron-face face-9"></div>
+                    <div class="polyhedron-face face-10"></div>
+                    <div class="polyhedron-face face-11"></div>
+                    <div class="polyhedron-face face-12"></div>
+                </div>
             </div>
         </div>
 
