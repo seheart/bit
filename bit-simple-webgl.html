@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit 3D - Simple WebGL</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: radial-gradient(circle at center, #001133, #000011);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            color: #00ffff;
+        }
+
+        #debug {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border: 1px solid #00ffff;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        canvas {
+            border: 2px solid #00ffff;
+            margin: 20px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #0088ff, #00ffff);
+            border: 2px solid #00ffff;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div id="debug">Loading...</div>
+    
+    <h1>BIT - Simple WebGL Test</h1>
+    
+    <div id="canvas-container"></div>
+    
+    <div>
+        <button onclick="sayYes()">YES</button>
+        <button onclick="sayNo()">NO</button>
+    </div>
+
+    <audio id="yesSound" preload="auto">
+        <source src="bit-yes.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="noSound" preload="auto">
+        <source src="bit-no.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="three.min.js"></script>
+    <script>
+        const debug = document.getElementById('debug');
+        
+        function log(msg) {
+            debug.innerHTML += msg + '<br>';
+            console.log(msg);
+        }
+
+        log('Starting...');
+        
+        if (typeof THREE === 'undefined') {
+            log('ERROR: Three.js not loaded!');
+        } else {
+            log('Three.js loaded successfully');
+            
+            try {
+                // Create scene
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                
+                // Create renderer
+                const renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(400, 400);
+                renderer.setClearColor(0x000000, 0.1);
+                
+                // Add canvas to page
+                document.getElementById('canvas-container').appendChild(renderer.domElement);
+                log('Renderer created and added to DOM');
+                
+                // Create icosahedron
+                const geometry = new THREE.IcosahedronGeometry(2, 0);
+                log('Icosahedron created, faces: ' + (geometry.index ? geometry.index.count / 3 : 'N/A'));
+                
+                // Create material
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0x00ffff,
+                    wireframe: true
+                });
+                
+                // Create mesh
+                const icosahedron = new THREE.Mesh(geometry, material);
+                scene.add(icosahedron);
+                log('Icosahedron added to scene');
+                
+                // Position camera
+                camera.position.z = 5;
+                
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+                    
+                    icosahedron.rotation.x += 0.01;
+                    icosahedron.rotation.y += 0.01;
+                    
+                    renderer.render(scene, camera);
+                }
+                
+                animate();
+                log('Animation started');
+                
+                // Make it global for button access
+                window.bit = icosahedron;
+                window.bitMaterial = material;
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+            }
+        }
+        
+        function sayYes() {
+            if (window.bitMaterial) {
+                window.bitMaterial.color.setHex(0xffff00);
+                setTimeout(() => {
+                    window.bitMaterial.color.setHex(0x00ffff);
+                }, 1000);
+            }
+            
+            const audio = document.getElementById('yesSound');
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log('Audio failed:', e));
+        }
+        
+        function sayNo() {
+            if (window.bitMaterial) {
+                window.bitMaterial.color.setHex(0xff0000);
+                setTimeout(() => {
+                    window.bitMaterial.color.setHex(0x00ffff);
+                }, 1000);
+            }
+            
+            const audio = document.getElementById('noSound');
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log('Audio failed:', e));
+        }
+    </script>
+</body>
+</html>

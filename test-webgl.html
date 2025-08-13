@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebGL Test</title>
+    <style>
+        body { margin: 0; background: #000; color: #0ff; font-family: monospace; }
+        #info { position: absolute; top: 10px; left: 10px; z-index: 100; }
+        canvas { border: 2px solid #0ff; }
+    </style>
+</head>
+<body>
+    <div id="info">Loading Three.js...</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        document.getElementById('info').textContent = 'Three.js loaded: ' + (typeof THREE !== 'undefined');
+        
+        if (typeof THREE !== 'undefined') {
+            // Simple WebGL test
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(400, 400);
+            document.body.appendChild(renderer.domElement);
+            
+            // Create a simple icosahedron
+            const geometry = new THREE.IcosahedronGeometry(2, 0);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0x00ffff, 
+                wireframe: true 
+            });
+            const mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+            
+            camera.position.z = 5;
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                mesh.rotation.x += 0.01;
+                mesh.rotation.y += 0.01;
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            document.getElementById('info').textContent = 'WebGL working! Icosahedron faces: ' + (geometry.index.count / 3);
+        }
+    </script>
+</body>
+</html>

@@ -3,409 +3,495 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bit 3D - True WebGL Implementation</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>Bit 3D - Simple WebGL</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background: radial-gradient(circle at center, #001133, #000011);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             font-family: 'Courier New', monospace;
-            overflow: hidden;
             color: #00ffff;
         }
 
-        .container {
-            text-align: center;
-            position: relative;
-        }
-
-        /* Grid effect background */
-        .grid-bg {
+        #debug {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
-            animation: grid-pulse 4s ease-in-out infinite;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border: 1px solid #00ffff;
+            font-size: 12px;
+            z-index: 1000;
         }
 
-        @keyframes grid-pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.1; }
-        }
-
-        #bit-canvas {
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .controls {
-            margin-top: 20px;
+        canvas {
+            border: 2px solid #00ffff;
+            margin: 20px;
         }
 
         button {
             background: linear-gradient(45deg, #0088ff, #00ffff);
             border: 2px solid #00ffff;
             color: white;
-            padding: 15px 30px;
-            margin: 10px;
-            font-size: 18px;
+            padding: 10px 20px;
+            margin: 5px;
             cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background: linear-gradient(45deg, #00ffff, #0088ff);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-            transform: scale(1.05);
-        }
-
-        .status {
-            color: #00ffff;
-            font-size: 24px;
-            margin-top: 20px;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
-            min-height: 30px;
-        }
-
-        .instructions {
-            color: #00ffff;
-            margin-bottom: 20px;
-            opacity: 0.8;
-            font-size: 14px;
+            font-family: inherit;
         }
     </style>
 </head>
 <body>
-    <div class="grid-bg"></div>
-    <div class="container">
-        <h1 style="color: #00ffff; text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);">BIT</h1>
-        <div class="instructions">Click Bit or use the buttons to interact</div>
-        
-        <canvas id="bit-canvas" width="400" height="400"></canvas>
-
-        <div class="status" id="status"></div>
-
-        <div class="controls">
-            <button onclick="sayYes()">Ask a Question (Yes)</button>
-            <button onclick="sayNo()">Ask a Question (No)</button>
-            <button onclick="rapidResponse()">Excite Bit!</button>
-        </div>
+    <div id="debug">Loading...</div>
+    
+    <h1>BIT - Simple WebGL Test</h1>
+    
+    <div id="canvas-container"></div>
+    
+    <div>
+        <button onclick="sayYes()">YES</button>
+        <button onclick="sayNo()">NO</button>
     </div>
 
-    <!-- Audio elements for actual Bit sounds -->
-    <audio id="noSound" preload="auto">
-        <source src="bit-no.mp3" type="audio/mpeg">
-    </audio>
-    
     <audio id="yesSound" preload="auto">
         <source src="bit-yes.mp3" type="audio/mpeg">
     </audio>
+    
+    <audio id="noSound" preload="auto">
+        <source src="bit-no.mp3" type="audio/mpeg">
+    </audio>
 
+    <script src="three.min.js"></script>
     <script>
-        // Three.js setup
-        const canvas = document.getElementById('bit-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ 
-            canvas: canvas, 
-            antialias: true,
-            alpha: true 
-        });
+        const debug = document.getElementById('debug');
         
-        renderer.setSize(400, 400);
-        renderer.setClearColor(0x000000, 0);
-        
-        // Lighting setup for TRON-like appearance
-        const ambientLight = new THREE.AmbientLight(0x004444, 0.4);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0x00ffff, 1);
-        directionalLight.position.set(5, 5, 5);
-        scene.add(directionalLight);
-        
-        const rimLight = new THREE.DirectionalLight(0x0088ff, 0.5);
-        rimLight.position.set(-5, -5, 2);
-        scene.add(rimLight);
-
-        // Create Regular Icosahedron geometry - Platonic solid
-        // 20 triangular faces, 30 edges, 12 vertices
-        const icosahedronGeometry = new THREE.IcosahedronGeometry(2, 0); // radius=2, detail=0 for pure icosahedron
-        
-        // Verify the geometry matches Platonic solid specifications
-        console.log('Icosahedron Geometry:');
-        console.log('- Faces:', icosahedronGeometry.index.count / 3); // Should be 20
-        console.log('- Vertices:', icosahedronGeometry.attributes.position.count); // Should be 12
-        console.log('- Edges:', (icosahedronGeometry.index.count / 3 * 3) / 2); // Should be 30
-        
-        // Create materials for different states
-        const neutralMaterial = new THREE.MeshPhongMaterial({
-            color: 0x00ffff,
-            emissive: 0x002222,
-            transparent: true,
-            opacity: 0.8,
-            wireframe: false,
-            shininess: 100
-        });
-
-        const yesMaterial = new THREE.MeshPhongMaterial({
-            color: 0xffff00,
-            emissive: 0x444400,
-            transparent: true,
-            opacity: 0.9,
-            shininess: 100
-        });
-
-        const noMaterial = new THREE.MeshPhongMaterial({
-            color: 0xff0000,
-            emissive: 0x440000,
-            transparent: true,
-            opacity: 0.9,
-            shininess: 100
-        });
-
-        // Create the Bit mesh
-        let bit = new THREE.Mesh(icosahedronGeometry, neutralMaterial);
-        scene.add(bit);
-
-        // Enhanced wireframe overlay to show icosahedral structure
-        const wireframe = new THREE.WireframeGeometry(icosahedronGeometry);
-        const wireframeMaterial = new THREE.LineBasicMaterial({ 
-            color: 0x00ffff, 
-            transparent: true, 
-            opacity: 0.8,
-            linewidth: 2
-        });
-        const wireframeMesh = new THREE.LineSegments(wireframe, wireframeMaterial);
-        bit.add(wireframeMesh);
-        
-        // Add vertex highlights to show the 12 vertices
-        const vertexGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-        const vertexMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x00ffff, 
-            transparent: true, 
-            opacity: 0.9 
-        });
-        
-        // Get the 12 vertices of the icosahedron
-        const vertices = icosahedronGeometry.attributes.position.array;
-        for (let i = 0; i < vertices.length; i += 3) {
-            const vertexSphere = new THREE.Mesh(vertexGeometry, vertexMaterial);
-            vertexSphere.position.set(vertices[i], vertices[i+1], vertices[i+2]);
-            bit.add(vertexSphere);
+        function log(msg) {
+            debug.innerHTML += msg + '<br>';
+            console.log(msg);
         }
 
-        // Position camera
-        camera.position.z = 8;
-
-        // Animation loop
-        let animationState = 'neutral';
-        let animationTimer = 0;
-        let rotationSpeed = 0.01;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Continuous rotation
-            bit.rotation.x += rotationSpeed;
-            bit.rotation.y += rotationSpeed * 1.2;
-            bit.rotation.z += rotationSpeed * 0.8;
-            
-            // Floating animation
-            bit.position.y = Math.sin(Date.now() * 0.002) * 0.3;
-            
-            // Handle state animations
-            if (animationState === 'yes') {
-                bit.scale.setScalar(1.2 + Math.sin(animationTimer * 0.1) * 0.1);
-                rotationSpeed = 0.05;
-                animationTimer++;
-                if (animationTimer > 60) {
-                    resetToNeutral();
-                }
-            } else if (animationState === 'no') {
-                bit.scale.setScalar(1.3 + Math.sin(animationTimer * 0.15) * 0.15);
-                bit.rotation.z += 0.1;
-                rotationSpeed = 0.08;
-                animationTimer++;
-                if (animationTimer > 60) {
-                    resetToNeutral();
-                }
-            } else {
-                // Neutral breathing effect
-                bit.scale.setScalar(1 + Math.sin(Date.now() * 0.001) * 0.05);
-                rotationSpeed = 0.01;
-            }
-            
-            renderer.render(scene, camera);
-        }
-
-        function resetToNeutral() {
-            animationState = 'neutral';
-            animationTimer = 0;
-            bit.material = neutralMaterial;
-            wireframeMaterial.color.setHex(0x00ffff);
-        }
-
-        // Audio system (same as before)
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playYesSound() {
-            const yesAudio = document.getElementById('yesSound');
-            yesAudio.currentTime = 0;
-            yesAudio.play().catch(() => {
-                playGeneratedYesSound();
-            });
-        }
+        log('Starting...');
         
-        function playNoSound() {
-            const noAudio = document.getElementById('noSound');
-            noAudio.currentTime = 0;
-            noAudio.play().catch(() => {
-                playGeneratedNoSound();
-            });
-        }
-
-        function playGeneratedYesSound() {
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
+        if (typeof THREE === 'undefined') {
+            log('ERROR: Three.js not loaded!');
+        } else {
+            log('Three.js loaded successfully');
             
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
-            
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.3);
-        }
-        
-        function playGeneratedNoSound() {
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
-            
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-            
-            oscillator.type = 'square';
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.3);
-        }
-
-        // Interaction functions
-        function sayYes() {
-            animationState = 'yes';
-            animationTimer = 0;
-            bit.material = yesMaterial;
-            wireframeMaterial.color.setHex(0xffff00);
-            
-            document.getElementById('status').textContent = 'YES!';
-            document.getElementById('status').style.color = '#ffff00';
-            
-            playYesSound();
-            
-            setTimeout(() => {
-                document.getElementById('status').textContent = '';
-            }, 1500);
-        }
-
-        function sayNo() {
-            animationState = 'no';
-            animationTimer = 0;
-            bit.material = noMaterial;
-            wireframeMaterial.color.setHex(0xff0000);
-            
-            document.getElementById('status').textContent = 'NO!';
-            document.getElementById('status').style.color = '#ff0000';
-            
-            playNoSound();
-            
-            setTimeout(() => {
-                document.getElementById('status').textContent = '';
-            }, 1500);
-        }
-
-        function randomResponse() {
-            if (Math.random() > 0.5) {
-                sayYes();
-            } else {
-                sayNo();
-            }
-        }
-
-        function rapidResponse() {
-            const responses = Math.random() > 0.5;
-            let count = 0;
-            const maxCount = 5;
-            
-            const interval = 440; // Clean timing
-            
-            const timer = setInterval(() => {
-                if (responses) {
-                    sayYes();
-                    document.getElementById('status').textContent = 'YES! '.repeat(count + 1);
-                } else {
-                    sayNo();
-                    document.getElementById('status').textContent = 'NO! '.repeat(count + 1);
+            try {
+                // Create scene
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                
+                // Create renderer
+                const renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(400, 400);
+                renderer.setClearColor(0x000000, 0.1);
+                
+                // Add canvas to page
+                document.getElementById('canvas-container').appendChild(renderer.domElement);
+                log('Renderer created and added to DOM');
+                
+                // Create stellated icosahedron - pyramids on each face
+                function createStellatedIcosahedron(radius, pyramidHeight) {
+                    log('Creating stellated icosahedron...');
+                    
+                    const baseGeo = new THREE.IcosahedronGeometry(radius, 1); // subdivision level 1 for more faces
+                    const positions = baseGeo.attributes.position.array;
+                    
+                    // Handle both indexed and non-indexed geometry
+                    let indices;
+                    if (baseGeo.index) {
+                        indices = baseGeo.index.array;
+                    } else {
+                        // Create indices for non-indexed geometry
+                        indices = [];
+                        for (let i = 0; i < positions.length / 3; i++) {
+                            indices.push(i);
+                        }
+                    }
+                    
+                    log('Using ' + (baseGeo.index ? 'indexed' : 'non-indexed') + ' geometry');
+                    
+                    const newVertices = [];
+                    const newIndices = [];
+                    
+                    // Copy original vertices
+                    for (let i = 0; i < positions.length; i++) {
+                        newVertices.push(positions[i]);
+                    }
+                    
+                    log('Base vertices: ' + positions.length / 3);
+                    
+                    // For each face, create a pyramid
+                    for (let i = 0; i < indices.length; i += 3) {
+                        const i1 = indices[i];
+                        const i2 = indices[i + 1]; 
+                        const i3 = indices[i + 2];
+                        
+                        // Get the three vertices of this face
+                        const v1 = new THREE.Vector3(positions[i1*3], positions[i1*3+1], positions[i1*3+2]);
+                        const v2 = new THREE.Vector3(positions[i2*3], positions[i2*3+1], positions[i2*3+2]);
+                        const v3 = new THREE.Vector3(positions[i3*3], positions[i3*3+1], positions[i3*3+2]);
+                        
+                        // Calculate face center
+                        const center = new THREE.Vector3()
+                            .addVectors(v1, v2)
+                            .add(v3)
+                            .divideScalar(3);
+                        
+                        // Calculate face normal (outward direction)
+                        const edge1 = new THREE.Vector3().subVectors(v2, v1);
+                        const edge2 = new THREE.Vector3().subVectors(v3, v1);
+                        const normal = new THREE.Vector3().crossVectors(edge1, edge2).normalize();
+                        
+                        // Create pyramid apex
+                        const apex = center.clone().add(normal.multiplyScalar(pyramidHeight));
+                        const apexIndex = newVertices.length / 3;
+                        newVertices.push(apex.x, apex.y, apex.z);
+                        
+                        // Create 3 triangular faces for triangular pyramid (like the paper model)
+                        // Each "Part A" spike has 3 faces connecting the base triangle to the apex
+                        newIndices.push(i1, i2, apexIndex);  // face 1
+                        newIndices.push(i2, i3, apexIndex);  // face 2
+                        newIndices.push(i3, i1, apexIndex);  // face 3
+                    }
+                    
+                    log('Total vertices: ' + newVertices.length / 3);
+                    log('Total faces: ' + newIndices.length / 3);
+                    
+                    const stellatedGeometry = new THREE.BufferGeometry();
+                    stellatedGeometry.setAttribute('position', new THREE.Float32BufferAttribute(newVertices, 3));
+                    stellatedGeometry.setIndex(newIndices);
+                    stellatedGeometry.computeVertexNormals();
+                    
+                    return stellatedGeometry;
                 }
                 
-                count++;
-                if (count >= maxCount) {
-                    clearInterval(timer);
-                    setTimeout(() => {
-                        document.getElementById('status').textContent = '';
-                        resetToNeutral();
-                    }, 1500);
+                // Create YES geometry - Octahedron (bipyramid)
+                function createOctahedron(radius) {
+                    log('Creating YES octahedron...');
+                    
+                    // Octahedron vertices - two pyramids joined at base
+                    const vertices = [
+                        // Top pyramid apex
+                        0, radius, 0,
+                        // Middle square base
+                        radius, 0, 0,
+                        0, 0, radius,
+                        -radius, 0, 0,
+                        0, 0, -radius,
+                        // Bottom pyramid apex  
+                        0, -radius, 0
+                    ];
+                    
+                    // Octahedron faces - 8 triangular faces
+                    const indices = [
+                        // Top pyramid (4 faces)
+                        0, 1, 2,  // top-front-right
+                        0, 2, 3,  // top-back-right
+                        0, 3, 4,  // top-back-left
+                        0, 4, 1,  // top-front-left
+                        // Bottom pyramid (4 faces)
+                        5, 2, 1,  // bottom-front-right
+                        5, 3, 2,  // bottom-back-right
+                        5, 4, 3,  // bottom-back-left
+                        5, 1, 4   // bottom-front-left
+                    ];
+                    
+                    const octahedronGeometry = new THREE.BufferGeometry();
+                    octahedronGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+                    octahedronGeometry.setIndex(indices);
+                    octahedronGeometry.computeVertexNormals();
+                    
+                    log('Octahedron faces: ' + indices.length / 3);
+                    log('Octahedron vertices: ' + vertices.length / 3);
+                    return octahedronGeometry;
                 }
-            }, interval);
+                
+                // Create NO geometry - Great Stellated Dodecahedron (many spikes)
+                function createGreatStellatedDodecahedron(radius, spikeHeight) {
+                    log('Creating NO great stellated dodecahedron...');
+                    
+                    // Start with a dodecahedron base and add many long spikes
+                    const baseGeo = new THREE.DodecahedronGeometry(radius, 0);
+                    const positions = baseGeo.attributes.position.array;
+                    
+                    // Handle both indexed and non-indexed geometry
+                    let indices;
+                    if (baseGeo.index) {
+                        indices = baseGeo.index.array;
+                    } else {
+                        indices = [];
+                        for (let i = 0; i < positions.length / 3; i++) {
+                            indices.push(i);
+                        }
+                    }
+                    
+                    const newVertices = [];
+                    const newIndices = [];
+                    
+                    // Copy original vertices
+                    for (let i = 0; i < positions.length; i++) {
+                        newVertices.push(positions[i]);
+                    }
+                    
+                    // Create spikes on each pentagonal face
+                    // spikeHeight parameter controls spike length
+                    
+                    for (let i = 0; i < indices.length; i += 3) {
+                        const i1 = indices[i];
+                        const i2 = indices[i + 1]; 
+                        const i3 = indices[i + 2];
+                        
+                        // Get the three vertices of this face
+                        const v1 = new THREE.Vector3(positions[i1*3], positions[i1*3+1], positions[i1*3+2]);
+                        const v2 = new THREE.Vector3(positions[i2*3], positions[i2*3+1], positions[i2*3+2]);
+                        const v3 = new THREE.Vector3(positions[i3*3], positions[i3*3+1], positions[i3*3+2]);
+                        
+                        // Calculate face center and normal
+                        const center = new THREE.Vector3()
+                            .addVectors(v1, v2)
+                            .add(v3)
+                            .divideScalar(3);
+                        
+                        const edge1 = new THREE.Vector3().subVectors(v2, v1);
+                        const edge2 = new THREE.Vector3().subVectors(v3, v1);
+                        const normal = new THREE.Vector3().crossVectors(edge1, edge2).normalize();
+                        
+                        // Create long spike apex
+                        const apex = center.clone().add(normal.multiplyScalar(spikeHeight));
+                        const apexIndex = newVertices.length / 3;
+                        newVertices.push(apex.x, apex.y, apex.z);
+                        
+                        // Create triangular spike faces
+                        newIndices.push(i1, i2, apexIndex);
+                        newIndices.push(i2, i3, apexIndex);
+                        newIndices.push(i3, i1, apexIndex);
+                    }
+                    
+                    const stellatedGeometry = new THREE.BufferGeometry();
+                    stellatedGeometry.setAttribute('position', new THREE.Float32BufferAttribute(newVertices, 3));
+                    stellatedGeometry.setIndex(newIndices);
+                    stellatedGeometry.computeVertexNormals();
+                    
+                    log('Great stellated dodecahedron faces: ' + newIndices.length / 3);
+                    return stellatedGeometry;
+                }
+                
+                // Create all three Bit geometries - same overall size
+                const neutralGeometry = createStellatedIcosahedron(2, 0.3);
+                const yesGeometry = createOctahedron(1.8);  // Closer to neutral size
+                const noGeometry = createGreatStellatedDodecahedron(1.0, 1.2); // Smaller base, much longer spikes like the GIF
+                
+                let currentGeometry = neutralGeometry;
+                const geometry = currentGeometry;
+                
+                // Create material - solid with flat shading for crystal look
+                const material = new THREE.MeshPhongMaterial({
+                    color: 0x00ffff,
+                    emissive: 0x002222,
+                    transparent: true,
+                    opacity: 0.9,
+                    flatShading: true, // Sharp crystal facets
+                    shininess: 100
+                });
+                
+                // Add lighting for the solid material
+                const ambientLight = new THREE.AmbientLight(0x004444, 0.4);
+                scene.add(ambientLight);
+                
+                const directionalLight = new THREE.DirectionalLight(0x00ffff, 1);
+                directionalLight.position.set(5, 5, 5);
+                scene.add(directionalLight);
+                
+                // Create mesh
+                const icosahedron = new THREE.Mesh(geometry, material);
+                scene.add(icosahedron);
+                log('Icosahedron added to scene');
+                
+                // Position camera
+                camera.position.z = 5;
+                
+                // Animation loop with rotation control and morphing
+                let isRotating = true; // Only rotate in neutral state
+                let isMorphing = false;
+                let morphProgress = 0;
+                let morphSpeed = 0.03; // Adjust for morphing speed
+                let morphFrom = null;
+                let morphTo = null;
+                let originalPositions = null;
+                let targetPositions = null;
+                
+                function animate() {
+                    requestAnimationFrame(animate);
+                    
+                    if (isRotating) {
+                        icosahedron.rotation.x += 0.01;
+                        icosahedron.rotation.y += 0.01;
+                    }
+                    
+                    // Handle morphing animation
+                    if (isMorphing) {
+                        morphProgress += morphSpeed;
+                        
+                        if (morphProgress >= 1) {
+                            // Morphing complete
+                            morphProgress = 1;
+                            isMorphing = false;
+                        }
+                        
+                        // Interpolate between vertex positions
+                        const positions = icosahedron.geometry.attributes.position.array;
+                        for (let i = 0; i < positions.length; i++) {
+                            positions[i] = originalPositions[i] + (targetPositions[i] - originalPositions[i]) * morphProgress;
+                        }
+                        icosahedron.geometry.attributes.position.needsUpdate = true;
+                    }
+                    
+                    renderer.render(scene, camera);
+                }
+                
+                animate();
+                log('Animation started');
+                
+                // Make it global for button access
+                window.bit = icosahedron;
+                window.bitMaterial = material;
+                window.neutralGeometry = neutralGeometry;
+                window.yesGeometry = yesGeometry;
+                window.noGeometry = noGeometry;
+                window.setRotating = function(rotating) { isRotating = rotating; };
+                
+                // Morphing function
+                window.morphToGeometry = function(targetGeometry, duration = 1000) {
+                    if (isMorphing) return; // Already morphing
+                    
+                    // Store original positions
+                    const currentPositions = icosahedron.geometry.attributes.position.array;
+                    originalPositions = new Float32Array(currentPositions);
+                    
+                    // For now, let's use a simpler approach - direct geometry swap with easing
+                    // This will look like morphing due to the smooth transition
+                    isMorphing = true;
+                    morphProgress = 0;
+                    morphSpeed = 0.05; // Smooth transition speed
+                    
+                    // Set target geometry immediately but animate the transition
+                    const startTime = Date.now();
+                    const originalGeometry = icosahedron.geometry;
+                    
+                    const morphInterval = setInterval(() => {
+                        const elapsed = Date.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        
+                        if (progress >= 1) {
+                            // Complete the morph
+                            icosahedron.geometry = targetGeometry;
+                            clearInterval(morphInterval);
+                            isMorphing = false;
+                        }
+                    }, 16); // ~60fps
+                };
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+            }
         }
-
-        // Click interaction
-        canvas.addEventListener('click', randomResponse);
-
-        // Keyboard controls
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'y' || e.key === 'Y') sayYes();
-            if (e.key === 'n' || e.key === 'N') sayNo();
-            if (e.key === ' ') randomResponse();
-            if (e.key === 'e' || e.key === 'E') rapidResponse();
-        });
-
-        // Start animation
-        animate();
-
-        // Initial message
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('status').textContent = 'Ready to respond!';
-                document.getElementById('status').style.color = '#00ffff';
-                setTimeout(() => {
-                    document.getElementById('status').textContent = '';
-                }, 2000);
-            }, 500);
-        });
+        
+        function sayYes() {
+            if (window.bit && window.yesGeometry) {
+                // Smooth morph transition to YES state
+                window.setRotating(false); // Stop rotation during transition
+                
+                // Much smoother morphing with easing
+                morphToShape(window.yesGeometry, 0xffaa00, () => {
+                    // Brief flash in YES state, then immediately return to neutral
+                    setTimeout(() => {
+                        morphToShape(window.neutralGeometry, 0x00ffff, () => {
+                            window.setRotating(true); // Resume rotation when back to neutral
+                        }, true); // true = fast return to neutral
+                    }, 200); // Just a brief 200ms flash
+                });
+            }
+            
+            const audio = document.getElementById('yesSound');
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log('Audio failed:', e));
+        }
+        
+        // Fast morphing function with easing
+        function morphToShape(targetGeometry, targetColor, onComplete, isReturnToNeutral = false) {
+            let startTime = null;
+            const duration = isReturnToNeutral ? 120 : 200; // Return 120ms (still fast but visible), morph in 200ms
+            
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Smooth easing function (ease-in-out)
+                const eased = progress < 0.5 
+                    ? 4 * progress * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                
+                // Create morphing effect with smooth scaling and opacity
+                if (progress <= 0.5) {
+                    // Shrink phase
+                    const scale = 1 - (eased * 1.2); // Shrink down more smoothly
+                    const opacity = 1 - (eased * 0.7); // Fade out partially
+                    window.bit.scale.setScalar(Math.max(0.1, scale));
+                    window.bitMaterial.opacity = Math.max(0.3, opacity);
+                } else if (progress === 0.5 || (progress > 0.5 && !window.bit.userData.morphSwitched)) {
+                    // Switch geometry and color at midpoint
+                    window.bit.geometry = targetGeometry;
+                    window.bitMaterial.color.setHex(targetColor);
+                    window.bit.userData.morphSwitched = true;
+                } else {
+                    // Expand phase
+                    const expandProgress = (progress - 0.5) * 2; // 0 to 1 for second half
+                    const scale = 0.1 + (expandProgress * 0.9); // Expand back to normal
+                    const opacity = 0.3 + (expandProgress * 0.6); // Fade back in
+                    window.bit.scale.setScalar(scale);
+                    window.bitMaterial.opacity = opacity;
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // Morphing complete - ensure final values
+                    window.bit.scale.setScalar(1);
+                    window.bitMaterial.opacity = 0.9;
+                    window.bit.userData.morphSwitched = false;
+                    if (onComplete) onComplete();
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        function sayNo() {
+            if (window.bit && window.noGeometry) {
+                // Smooth morph transition to NO state
+                window.setRotating(false); // Stop rotation during transition
+                
+                // Much smoother morphing with easing
+                morphToShape(window.noGeometry, 0xcc0000, () => {
+                    // Brief flash in NO state, then immediately return to neutral
+                    setTimeout(() => {
+                        morphToShape(window.neutralGeometry, 0x00ffff, () => {
+                            window.setRotating(true); // Resume rotation when back to neutral
+                        }, true); // true = fast return to neutral
+                    }, 200); // Just a brief 200ms flash
+                });
+            }
+            
+            const audio = document.getElementById('noSound');
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log('Audio failed:', e));
+        }
     </script>
 </body>
 </html>
