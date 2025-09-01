@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit from TRON - Enhanced CSS 3D</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #001133, #000011);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        /* Grid effect background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: grid-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes grid-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.1; }
+        }
+
+        #bit {
+            width: 200px;
+            height: 200px;
+            margin: 50px auto;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+
+        .polyhedron {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: float 3s ease-in-out infinite, rotate 8s linear infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg); }
+        }
+
+        /* Enhanced 3D faces with proper lighting */
+        .face {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(0, 255, 255, 0.8), rgba(0, 200, 255, 0.9));
+            border: 1px solid rgba(0, 255, 255, 0.6);
+            box-shadow: 
+                inset 0 0 20px rgba(0, 255, 255, 0.3),
+                0 0 30px rgba(0, 255, 255, 0.4);
+            backface-visibility: visible;
+            transform-origin: center;
+        }
+
+        /* Icosahedron faces (20 triangular faces) */
+        .icosahedron .face {
+            width: 60px;
+            height: 60px;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        /* Position icosahedron faces in 3D */
+        .icosahedron .face:nth-child(1) { transform: translateZ(50px) rotateY(0deg) rotateX(0deg); }
+        .icosahedron .face:nth-child(2) { transform: translateZ(50px) rotateY(72deg) rotateX(0deg); }
+        .icosahedron .face:nth-child(3) { transform: translateZ(50px) rotateY(144deg) rotateX(0deg); }
+        .icosahedron .face:nth-child(4) { transform: translateZ(50px) rotateY(216deg) rotateX(0deg); }
+        .icosahedron .face:nth-child(5) { transform: translateZ(50px) rotateY(288deg) rotateX(0deg); }
+        
+        .icosahedron .face:nth-child(6) { transform: translateZ(30px) rotateY(36deg) rotateX(60deg); }
+        .icosahedron .face:nth-child(7) { transform: translateZ(30px) rotateY(108deg) rotateX(60deg); }
+        .icosahedron .face:nth-child(8) { transform: translateZ(30px) rotateY(180deg) rotateX(60deg); }
+        .icosahedron .face:nth-child(9) { transform: translateZ(30px) rotateY(252deg) rotateX(60deg); }
+        .icosahedron .face:nth-child(10) { transform: translateZ(30px) rotateY(324deg) rotateX(60deg); }
+        
+        .icosahedron .face:nth-child(11) { transform: translateZ(-30px) rotateY(36deg) rotateX(-60deg); }
+        .icosahedron .face:nth-child(12) { transform: translateZ(-30px) rotateY(108deg) rotateX(-60deg); }
+        .icosahedron .face:nth-child(13) { transform: translateZ(-30px) rotateY(180deg) rotateX(-60deg); }
+        .icosahedron .face:nth-child(14) { transform: translateZ(-30px) rotateY(252deg) rotateX(-60deg); }
+        .icosahedron .face:nth-child(15) { transform: translateZ(-30px) rotateY(324deg) rotateX(-60deg); }
+        
+        .icosahedron .face:nth-child(16) { transform: translateZ(-50px) rotateY(0deg) rotateX(180deg); }
+        .icosahedron .face:nth-child(17) { transform: translateZ(-50px) rotateY(72deg) rotateX(180deg); }
+        .icosahedron .face:nth-child(18) { transform: translateZ(-50px) rotateY(144deg) rotateX(180deg); }
+        .icosahedron .face:nth-child(19) { transform: translateZ(-50px) rotateY(216deg) rotateX(180deg); }
+        .icosahedron .face:nth-child(20) { transform: translateZ(-50px) rotateY(288deg) rotateX(180deg); }
+
+        /* YES state - Octahedron */
+        .octahedron {
+            display: none;
+        }
+
+        .octahedron.active {
+            display: block;
+        }
+
+        .octahedron .face {
+            background: linear-gradient(45deg, rgba(255, 255, 0, 0.8), rgba(255, 200, 0, 0.9));
+            border-color: rgba(255, 255, 0, 0.6);
+            box-shadow: 
+                inset 0 0 20px rgba(255, 255, 0, 0.3),
+                0 0 30px rgba(255, 255, 0, 0.4);
+            width: 80px;
+            height: 80px;
+        }
+
+        /* Position octahedron faces */
+        .octahedron .face:nth-child(1) { transform: translateZ(60px) rotateY(0deg) rotateX(45deg); }
+        .octahedron .face:nth-child(2) { transform: translateZ(60px) rotateY(90deg) rotateX(45deg); }
+        .octahedron .face:nth-child(3) { transform: translateZ(60px) rotateY(180deg) rotateX(45deg); }
+        .octahedron .face:nth-child(4) { transform: translateZ(60px) rotateY(270deg) rotateX(45deg); }
+        .octahedron .face:nth-child(5) { transform: translateZ(-60px) rotateY(0deg) rotateX(-45deg); }
+        .octahedron .face:nth-child(6) { transform: translateZ(-60px) rotateY(90deg) rotateX(-45deg); }
+        .octahedron .face:nth-child(7) { transform: translateZ(-60px) rotateY(180deg) rotateX(-45deg); }
+        .octahedron .face:nth-child(8) { transform: translateZ(-60px) rotateY(270deg) rotateX(-45deg); }
+
+        /* NO state - Spiky tetrahedra */
+        .tetrahedra {
+            display: none;
+        }
+
+        .tetrahedra.active {
+            display: block;
+        }
+
+        .tetrahedra .face {
+            background: linear-gradient(45deg, rgba(255, 0, 0, 0.8), rgba(255, 100, 0, 0.9));
+            border-color: rgba(255, 0, 0, 0.6);
+            box-shadow: 
+                inset 0 0 20px rgba(255, 0, 0, 0.3),
+                0 0 30px rgba(255, 0, 0, 0.4);
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Compound tetrahedra positions */
+        .tetrahedra .face:nth-child(1) { transform: translateZ(70px) rotateY(0deg) rotateX(60deg); }
+        .tetrahedra .face:nth-child(2) { transform: translateZ(70px) rotateY(72deg) rotateX(60deg); }
+        .tetrahedra .face:nth-child(3) { transform: translateZ(70px) rotateY(144deg) rotateX(60deg); }
+        .tetrahedra .face:nth-child(4) { transform: translateZ(70px) rotateY(216deg) rotateX(60deg); }
+        .tetrahedra .face:nth-child(5) { transform: translateZ(70px) rotateY(288deg) rotateX(60deg); }
+        
+        .tetrahedra .face:nth-child(6) { transform: translateZ(-70px) rotateY(36deg) rotateX(-60deg); }
+        .tetrahedra .face:nth-child(7) { transform: translateZ(-70px) rotateY(108deg) rotateX(-60deg); }
+        .tetrahedra .face:nth-child(8) { transform: translateZ(-70px) rotateY(180deg) rotateX(-60deg); }
+        .tetrahedra .face:nth-child(9) { transform: translateZ(-70px) rotateY(252deg) rotateX(-60deg); }
+        .tetrahedra .face:nth-child(10) { transform: translateZ(-70px) rotateY(324deg) rotateX(-60deg); }
+
+        .icosahedron.active {
+            display: block;
+        }
+
+        /* Status text */
+        #status {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px currentColor;
+            height: 30px;
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 40px;
+        }
+
+        button {
+            background: rgba(0, 255, 255, 0.2);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 12px 24px;
+            margin: 0 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Glow effects for different states */
+        .bit-glow-neutral #bit {
+            filter: drop-shadow(0 0 25px rgba(0, 221, 255, 0.9)) 
+                    drop-shadow(0 0 35px rgba(0, 221, 255, 0.6));
+        }
+
+        .bit-glow-yes #bit {
+            filter: drop-shadow(0 0 30px rgba(255, 255, 0, 1)) 
+                    drop-shadow(0 0 40px rgba(255, 255, 0, 0.7));
+        }
+
+        .bit-glow-no #bit {
+            filter: drop-shadow(0 0 35px rgba(255, 0, 0, 1)) 
+                    drop-shadow(0 0 45px rgba(255, 0, 0, 0.8));
+        }
+
+        /* Morphing animation */
+        .polyhedron {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .morphing {
+            animation-play-state: paused;
+            transform: scale(0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <div class="container bit-glow-neutral">
+        <div id="bit">
+            <!-- Icosahedron (Neutral) -->
+            <div class="polyhedron icosahedron active">
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+            </div>
+
+            <!-- Octahedron (YES) -->
+            <div class="polyhedron octahedron">
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+            </div>
+
+            <!-- Compound Tetrahedra (NO) -->
+            <div class="polyhedron tetrahedra">
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+                <div class="face"></div>
+            </div>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div class="controls">
+            <button onclick="sayYes()">Ask Question</button>
+            <button onclick="sayNo()">Challenge Bit</button>
+            <button onclick="randomResponse()">Random</button>
+            <button onclick="rapidResponse()">Excite</button>
+        </div>
+    </div>
+
+    <audio id="yesSound" preload="auto">
+        <source src="bit-yes.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="noSound" preload="auto">
+        <source src="bit-no.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        let currentState = 'neutral';
+        let isAnimating = false;
+
+        function morphTo(state) {
+            if (isAnimating || currentState === state) return;
+            
+            isAnimating = true;
+            const container = document.querySelector('.container');
+            
+            // Remove old glow
+            container.className = container.className.replace(/bit-glow-\w+/g, '');
+            
+            // Hide current polyhedron
+            const current = document.querySelector('.polyhedron.active');
+            const target = document.querySelector(`.${state}`);
+            
+            if (current) {
+                current.classList.add('morphing');
+                setTimeout(() => {
+                    current.classList.remove('active', 'morphing');
+                    
+                    // Show new polyhedron
+                    target.classList.add('active');
+                    container.classList.add(`bit-glow-${state}`);
+                    
+                    setTimeout(() => {
+                        currentState = state;
+                        isAnimating = false;
+                    }, 300);
+                }, 200);
+            }
+        }
+
+        function sayYes() {
+            morphTo('octahedron');
+            document.getElementById('status').textContent = 'YES!';
+            document.getElementById('status').style.color = '#ffff00';
+            
+            const yesAudio = document.getElementById('yesSound');
+            yesAudio.currentTime = 0;
+            yesAudio.play().catch(() => {
+                console.log('Audio play failed');
+            });
+            
+            setTimeout(() => {
+                morphTo('icosahedron');
+                document.getElementById('status').textContent = '';
+            }, 1500);
+        }
+
+        function sayNo() {
+            morphTo('tetrahedra');
+            document.getElementById('status').textContent = 'NO!';
+            document.getElementById('status').style.color = '#ff0000';
+            
+            const noAudio = document.getElementById('noSound');
+            noAudio.currentTime = 0;
+            noAudio.play().catch(() => {
+                console.log('Audio play failed');
+            });
+            
+            setTimeout(() => {
+                morphTo('icosahedron');
+                document.getElementById('status').textContent = '';
+            }, 1500);
+        }
+
+        function randomResponse() {
+            if (Math.random() > 0.5) {
+                sayYes();
+            } else {
+                sayNo();
+            }
+        }
+
+        function rapidResponse() {
+            const responses = Math.random() > 0.5;
+            let count = 0;
+            const maxCount = 5;
+            
+            const timer = setInterval(() => {
+                if (responses) {
+                    morphTo('octahedron');
+                    document.getElementById('status').textContent = 'YES! '.repeat(count + 1);
+                    document.getElementById('status').style.color = '#ffff00';
+                } else {
+                    morphTo('tetrahedra');
+                    document.getElementById('status').textContent = 'NO! '.repeat(count + 1);
+                    document.getElementById('status').style.color = '#ff0000';
+                }
+                
+                count++;
+                if (count >= maxCount) {
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        morphTo('icosahedron');
+                        document.getElementById('status').textContent = '';
+                    }, 1500);
+                }
+            }, 400);
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'y' || e.key === 'Y') sayYes();
+            if (e.key === 'n' || e.key === 'N') sayNo();
+            if (e.key === ' ') randomResponse();
+            if (e.key === 'e' || e.key === 'E') rapidResponse();
+        });
+
+        // Click to interact
+        document.getElementById('bit').addEventListener('click', randomResponse);
+        
+        console.log("Enhanced CSS 3D Bit loaded successfully!");
+    </script>
+</body>
+</html>

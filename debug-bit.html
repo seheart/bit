@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Bit</title>
+    <style>
+        body { margin: 0; padding: 0; background: #000; }
+        canvas { 
+            border: 2px solid red;
+            width: 400px; 
+            height: 400px; 
+            display: block;
+            margin: 50px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: white; text-align: center;">Debug Test</h1>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script>
+        console.log("Starting debug test...");
+        
+        window.addEventListener('load', async () => {
+            console.log("Page loaded, initializing...");
+            
+            const canvas = document.getElementById('canvas');
+            console.log("Canvas:", canvas);
+            
+            if (!canvas) {
+                console.error("Canvas not found!");
+                return;
+            }
+            
+            if (!window.BABYLON) {
+                console.error("Babylon.js not loaded!");
+                return;
+            }
+            
+            console.log("Creating engine...");
+            const engine = new BABYLON.Engine(canvas, true);
+            
+            console.log("Creating scene...");
+            const scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color3(0.1, 0.1, 0.2);
+            
+            console.log("Creating camera...");
+            const camera = new BABYLON.ArcRotateCamera('camera', 0, Math.PI / 3, 8, BABYLON.Vector3.Zero(), scene);
+            camera.attachControls(canvas, true);
+            
+            console.log("Creating light...");
+            const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
+            light.intensity = 1;
+            
+            console.log("Creating icosahedron...");
+            const mesh = BABYLON.MeshBuilder.CreateIcoSphere('ico', {radius: 2, subdivisions: 0}, scene);
+            
+            console.log("Creating material...");
+            const material = new BABYLON.StandardMaterial('mat', scene);
+            material.diffuseColor = new BABYLON.Color3(0, 1, 1);
+            material.emissiveColor = new BABYLON.Color3(0, 0.3, 0.3);
+            mesh.material = material;
+            
+            console.log("Starting render loop...");
+            engine.runRenderLoop(() => {
+                mesh.rotation.y += 0.01;
+                scene.render();
+            });
+            
+            window.addEventListener('resize', () => {
+                engine.resize();
+            });
+            
+            console.log("Setup complete!");
+        });
+    </script>
+</body>
+</html>

@@ -84,18 +84,19 @@
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        /* True 3D Polyhedral Faces */
+        /* True 3D Polyhedral Faces - Triangular for accuracy */
         .polyhedron-face {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, rgba(0, 255, 255, 0.8), rgba(0, 200, 200, 0.4));
-            border: 2px solid rgba(0, 255, 255, 0.9);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, rgba(0, 255, 255, 0.9), rgba(0, 200, 200, 0.5));
+            border: 1px solid rgba(0, 255, 255, 0.8);
             transform-origin: center center;
             transform-style: preserve-3d;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
             box-shadow: 
-                inset 0 0 20px rgba(0, 255, 255, 0.6),
-                0 0 20px rgba(0, 255, 255, 0.4);
+                inset 0 0 15px rgba(0, 255, 255, 0.7),
+                0 0 15px rgba(0, 255, 255, 0.5);
         }
 
         /* Add 3D depth with pseudo-elements */
@@ -135,32 +136,34 @@
             filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.8));
         }
 
-        /* 20 Icosahedron faces with dramatic 3D depth */
-        .neutral .face-1 { transform: rotateX(31.7deg) rotateY(0deg) translateZ(80px); }
-        .neutral .face-2 { transform: rotateX(31.7deg) rotateY(72deg) translateZ(80px); }
-        .neutral .face-3 { transform: rotateX(31.7deg) rotateY(144deg) translateZ(80px); }
-        .neutral .face-4 { transform: rotateX(31.7deg) rotateY(216deg) translateZ(80px); }
-        .neutral .face-5 { transform: rotateX(31.7deg) rotateY(288deg) translateZ(80px); }
+        /* 20 Icosahedron faces - mathematically correct regular icosahedron */
+        /* Top pentagonal pyramid (5 faces) */
+        .neutral .face-1 { transform: rotateX(-26.57deg) rotateY(0deg) translateZ(65px); }
+        .neutral .face-2 { transform: rotateX(-26.57deg) rotateY(72deg) translateZ(65px); }
+        .neutral .face-3 { transform: rotateX(-26.57deg) rotateY(144deg) translateZ(65px); }
+        .neutral .face-4 { transform: rotateX(-26.57deg) rotateY(216deg) translateZ(65px); }
+        .neutral .face-5 { transform: rotateX(-26.57deg) rotateY(288deg) translateZ(65px); }
         
-        .neutral .face-6 { transform: rotateX(-31.7deg) rotateY(36deg) translateZ(80px); }
-        .neutral .face-7 { transform: rotateX(-31.7deg) rotateY(108deg) translateZ(80px); }
-        .neutral .face-8 { transform: rotateX(-31.7deg) rotateY(180deg) translateZ(80px); }
-        .neutral .face-9 { transform: rotateX(-31.7deg) rotateY(252deg) translateZ(80px); }
-        .neutral .face-10 { transform: rotateX(-31.7deg) rotateY(324deg) translateZ(80px); }
+        /* Upper belt (5 faces) - connecting top to middle */
+        .neutral .face-6 { transform: rotateX(10.81deg) rotateY(36deg) translateZ(65px); }
+        .neutral .face-7 { transform: rotateX(10.81deg) rotateY(108deg) translateZ(65px); }
+        .neutral .face-8 { transform: rotateX(10.81deg) rotateY(180deg) translateZ(65px); }
+        .neutral .face-9 { transform: rotateX(10.81deg) rotateY(252deg) translateZ(65px); }
+        .neutral .face-10 { transform: rotateX(10.81deg) rotateY(324deg) translateZ(65px); }
         
-        .neutral .face-11 { transform: rotateX(90deg) rotateY(0deg) translateZ(60px); }
-        .neutral .face-12 { transform: rotateX(-90deg) rotateY(0deg) translateZ(60px); }
+        /* Lower belt (5 faces) - connecting middle to bottom */
+        .neutral .face-11 { transform: rotateX(-10.81deg) rotateY(0deg) translateZ(65px) rotateZ(180deg); }
+        .neutral .face-12 { transform: rotateX(-10.81deg) rotateY(72deg) translateZ(65px) rotateZ(180deg); }
+        .neutral .face-13 { transform: rotateX(-10.81deg) rotateY(144deg) translateZ(65px) rotateZ(180deg); }
+        .neutral .face-14 { transform: rotateX(-10.81deg) rotateY(216deg) translateZ(65px) rotateZ(180deg); }
+        .neutral .face-15 { transform: rotateX(-10.81deg) rotateY(288deg) translateZ(65px) rotateZ(180deg); }
         
-        /* Additional faces with varied depths for true 3D volume */
-        .neutral .face-13 { transform: rotateX(58.3deg) rotateY(36deg) translateZ(70px); }
-        .neutral .face-14 { transform: rotateX(58.3deg) rotateY(108deg) translateZ(70px); }
-        .neutral .face-15 { transform: rotateX(58.3deg) rotateY(180deg) translateZ(70px); }
-        .neutral .face-16 { transform: rotateX(58.3deg) rotateY(252deg) translateZ(70px); }
-        .neutral .face-17 { transform: rotateX(58.3deg) rotateY(324deg) translateZ(70px); }
-        
-        .neutral .face-18 { transform: rotateX(-58.3deg) rotateY(0deg) translateZ(70px); }
-        .neutral .face-19 { transform: rotateX(-58.3deg) rotateY(72deg) translateZ(70px); }
-        .neutral .face-20 { transform: rotateX(-58.3deg) rotateY(144deg) translateZ(70px); }
+        /* Bottom pentagonal pyramid (5 faces) */
+        .neutral .face-16 { transform: rotateX(26.57deg) rotateY(36deg) translateZ(65px) rotateZ(180deg); }
+        .neutral .face-17 { transform: rotateX(26.57deg) rotateY(108deg) translateZ(65px) rotateZ(180deg); }
+        .neutral .face-18 { transform: rotateX(26.57deg) rotateY(180deg) translateZ(65px) rotateZ(180deg); }
+        .neutral .face-19 { transform: rotateX(26.57deg) rotateY(252deg) translateZ(65px) rotateZ(180deg); }
+        .neutral .face-20 { transform: rotateX(26.57deg) rotateY(324deg) translateZ(65px) rotateZ(180deg); }
 
         @keyframes pulse-neutral {
             0%, 100% { 
@@ -180,19 +183,23 @@
         }
 
         .yes .polyhedron-face {
-            border-bottom-color: rgba(255, 255, 0, 0.9);
+            background: linear-gradient(45deg, rgba(255, 255, 0, 0.9), rgba(255, 200, 0, 0.6));
+            border: 1px solid rgba(255, 255, 0, 0.9);
+            box-shadow: 
+                inset 0 0 15px rgba(255, 255, 0, 0.7),
+                0 0 20px rgba(255, 255, 0, 0.8);
             filter: drop-shadow(0 0 20px rgba(255, 255, 0, 1));
         }
 
-        /* Octahedron 8 faces - diamond/bipyramid shape */
-        .yes .face-1 { transform: rotateY(0deg) rotateX(54.7deg) translateZ(40px); }
-        .yes .face-2 { transform: rotateY(90deg) rotateX(54.7deg) translateZ(40px); }
-        .yes .face-3 { transform: rotateY(180deg) rotateX(54.7deg) translateZ(40px); }
-        .yes .face-4 { transform: rotateY(270deg) rotateX(54.7deg) translateZ(40px); }
-        .yes .face-5 { transform: rotateY(0deg) rotateX(-54.7deg) translateZ(40px); }
-        .yes .face-6 { transform: rotateY(90deg) rotateX(-54.7deg) translateZ(40px); }
-        .yes .face-7 { transform: rotateY(180deg) rotateX(-54.7deg) translateZ(40px); }
-        .yes .face-8 { transform: rotateY(270deg) rotateX(-54.7deg) translateZ(40px); }
+        /* Regular Octahedron 8 faces - mathematically correct */
+        .yes .face-1 { transform: rotateY(0deg) rotateX(54.74deg) translateZ(45px); }
+        .yes .face-2 { transform: rotateY(90deg) rotateX(54.74deg) translateZ(45px); }
+        .yes .face-3 { transform: rotateY(180deg) rotateX(54.74deg) translateZ(45px); }
+        .yes .face-4 { transform: rotateY(270deg) rotateX(54.74deg) translateZ(45px); }
+        .yes .face-5 { transform: rotateY(0deg) rotateX(-54.74deg) translateZ(45px); }
+        .yes .face-6 { transform: rotateY(90deg) rotateX(-54.74deg) translateZ(45px); }
+        .yes .face-7 { transform: rotateY(180deg) rotateX(-54.74deg) translateZ(45px); }
+        .yes .face-8 { transform: rotateY(270deg) rotateX(-54.74deg) translateZ(45px); }
 
         @keyframes pulse-yes {
             0% { transform: scale(1) rotateY(0deg); }
@@ -207,27 +214,47 @@
         }
 
         .no .polyhedron-face {
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 60px solid rgba(255, 0, 0, 0.9); /* Longer spiky triangles */
+            background: linear-gradient(45deg, rgba(255, 0, 0, 0.95), rgba(200, 0, 0, 0.7));
+            border: 1px solid rgba(255, 0, 0, 0.9);
+            width: 30px;
+            height: 60px; /* Longer spiky triangles */
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            box-shadow: 
+                inset 0 0 10px rgba(255, 0, 0, 0.8),
+                0 0 25px rgba(255, 0, 0, 0.9);
             filter: drop-shadow(0 0 25px rgba(255, 0, 0, 1));
         }
 
-        /* Stellated icosahedron - spikes projecting outward */
-        .no .face-1 { transform: rotateX(31.7deg) rotateY(0deg) translateZ(60px); }
-        .no .face-2 { transform: rotateX(31.7deg) rotateY(72deg) translateZ(60px); }
-        .no .face-3 { transform: rotateX(31.7deg) rotateY(144deg) translateZ(60px); }
-        .no .face-4 { transform: rotateX(31.7deg) rotateY(216deg) translateZ(60px); }
-        .no .face-5 { transform: rotateX(31.7deg) rotateY(288deg) translateZ(60px); }
+        /* Compound of tetrahedra - spiky projections in multiple directions */
+        /* Primary tetrahedral vertices */
+        .no .face-1 { transform: rotateX(70.5deg) rotateY(0deg) translateZ(80px); }
+        .no .face-2 { transform: rotateX(70.5deg) rotateY(120deg) translateZ(80px); }
+        .no .face-3 { transform: rotateX(70.5deg) rotateY(240deg) translateZ(80px); }
+        .no .face-4 { transform: rotateX(-70.5deg) rotateY(60deg) translateZ(80px); }
         
-        .no .face-6 { transform: rotateX(-31.7deg) rotateY(36deg) translateZ(60px); }
-        .no .face-7 { transform: rotateX(-31.7deg) rotateY(108deg) translateZ(60px); }
-        .no .face-8 { transform: rotateX(-31.7deg) rotateY(180deg) translateZ(60px); }
-        .no .face-9 { transform: rotateX(-31.7deg) rotateY(252deg) translateZ(60px); }
-        .no .face-10 { transform: rotateX(-31.7deg) rotateY(324deg) translateZ(60px); }
+        /* Secondary tetrahedral vertices */
+        .no .face-5 { transform: rotateX(-70.5deg) rotateY(180deg) translateZ(80px); }
+        .no .face-6 { transform: rotateX(-70.5deg) rotateY(300deg) translateZ(80px); }
+        .no .face-7 { transform: rotateX(35.26deg) rotateY(45deg) translateZ(75px); }
+        .no .face-8 { transform: rotateX(35.26deg) rotateY(165deg) translateZ(75px); }
         
-        .no .face-11 { transform: rotateX(90deg) rotateY(0deg) translateZ(45px); }
-        .no .face-12 { transform: rotateX(-90deg) rotateY(0deg) translateZ(45px); }
+        /* Additional spiky projections */
+        .no .face-9 { transform: rotateX(35.26deg) rotateY(285deg) translateZ(75px); }
+        .no .face-10 { transform: rotateX(-35.26deg) rotateY(15deg) translateZ(75px); }
+        .no .face-11 { transform: rotateX(-35.26deg) rotateY(135deg) translateZ(75px); }
+        .no .face-12 { transform: rotateX(-35.26deg) rotateY(255deg) translateZ(75px); }
+        
+        /* Equatorial spikes */
+        .no .face-13 { transform: rotateY(0deg) translateZ(70px); }
+        .no .face-14 { transform: rotateY(90deg) translateZ(70px); }
+        .no .face-15 { transform: rotateY(180deg) translateZ(70px); }
+        .no .face-16 { transform: rotateY(270deg) translateZ(70px); }
+        
+        /* Top and bottom spikes */
+        .no .face-17 { transform: rotateX(90deg) translateZ(85px); }
+        .no .face-18 { transform: rotateX(-90deg) translateZ(85px); }
+        .no .face-19 { transform: rotateX(45deg) rotateY(45deg) translateZ(72px); }
+        .no .face-20 { transform: rotateX(-45deg) rotateY(225deg) translateZ(72px); }
 
         @keyframes pulse-no {
             0% { transform: scale(1) rotateY(0deg); }
@@ -239,6 +266,33 @@
 
         .controls {
             margin-top: 40px;
+        }
+
+        /* Zdog Canvas styling with TRON glow effects */
+        #bit-canvas {
+            width: 200px !important;
+            height: 200px !important;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8));
+            transition: filter 0.3s ease;
+        }
+
+        /* Glow effects for different states */
+        .bit-glow-neutral #bit-canvas {
+            filter: drop-shadow(0 0 25px rgba(0, 221, 255, 0.9)) 
+                    drop-shadow(0 0 35px rgba(0, 221, 255, 0.6))
+                    drop-shadow(0 0 45px rgba(0, 221, 255, 0.3));
+        }
+
+        .bit-glow-yes #bit-canvas {
+            filter: drop-shadow(0 0 30px rgba(255, 255, 0, 1)) 
+                    drop-shadow(0 0 40px rgba(255, 255, 0, 0.7))
+                    drop-shadow(0 0 50px rgba(255, 255, 0, 0.4));
+        }
+
+        .bit-glow-no #bit-canvas {
+            filter: drop-shadow(0 0 35px rgba(255, 0, 0, 1)) 
+                    drop-shadow(0 0 45px rgba(255, 0, 0, 0.8))
+                    drop-shadow(0 0 55px rgba(255, 0, 0, 0.5));
         }
 
         button {
@@ -306,29 +360,7 @@
         
         <div id="bit" onclick="randomResponse()">
             <div class="polyhedron">
-                <div id="bitShape" class="shape neutral">
-                    <!-- 20 Icosahedron faces for true 3D geometry -->
-                    <div class="polyhedron-face face-1"></div>
-                    <div class="polyhedron-face face-2"></div>
-                    <div class="polyhedron-face face-3"></div>
-                    <div class="polyhedron-face face-4"></div>
-                    <div class="polyhedron-face face-5"></div>
-                    <div class="polyhedron-face face-6"></div>
-                    <div class="polyhedron-face face-7"></div>
-                    <div class="polyhedron-face face-8"></div>
-                    <div class="polyhedron-face face-9"></div>
-                    <div class="polyhedron-face face-10"></div>
-                    <div class="polyhedron-face face-11"></div>
-                    <div class="polyhedron-face face-12"></div>
-                    <div class="polyhedron-face face-13"></div>
-                    <div class="polyhedron-face face-14"></div>
-                    <div class="polyhedron-face face-15"></div>
-                    <div class="polyhedron-face face-16"></div>
-                    <div class="polyhedron-face face-17"></div>
-                    <div class="polyhedron-face face-18"></div>
-                    <div class="polyhedron-face face-19"></div>
-                    <div class="polyhedron-face face-20"></div>
-                </div>
+                <canvas id="bit-canvas" width="200" height="200"></canvas>
             </div>
         </div>
 
@@ -350,7 +382,226 @@
         <source src="bit-yes.mp3" type="audio/mpeg">
     </audio>
 
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script>
+        // Babylon.js setup for realistic 3D rendering
+        let engine, scene, camera, bitMesh;
+        let currentState = 'neutral';
+        let rotationSpeed = 0.01;
+        
+        // Initialize Babylon.js with realistic materials and lighting
+        async function init3D() {
+            console.log("Initializing 3D engine...");
+            const canvas = document.getElementById('bit-canvas');
+            
+            if (!canvas) {
+                console.error("Canvas not found!");
+                return;
+            }
+            
+            if (!window.BABYLON) {
+                console.error("Babylon.js not loaded!");
+                return;
+            }
+            
+            // Create Babylon.js engine and scene
+            engine = new BABYLON.Engine(canvas, true, { 
+                preserveDrawingBuffer: true, 
+                stencil: true 
+            });
+            
+            scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color3(0, 0, 0);
+            
+            console.log("Engine and scene created successfully");
+            
+            // Create camera
+            camera = new BABYLON.ArcRotateCamera("camera", 0, Math.PI / 3, 8, BABYLON.Vector3.Zero(), scene);
+            camera.attachControls(canvas, false); // Disable user controls
+            
+            // Enhanced lighting setup for realistic 3D
+            setupLighting();
+            
+            // Create initial icosahedron
+            console.log("Creating initial geometry...");
+            await createBitGeometry('neutral');
+            
+            // Animation loop
+            console.log("Starting render loop...");
+            engine.runRenderLoop(() => {
+                animate();
+                scene.render();
+            });
+            
+            // Handle window resize
+            window.addEventListener("resize", () => {
+                engine.resize();
+            });
+        }
+        
+        function setupLighting() {
+            // Enhanced crystalline lighting setup for solid 3D appearance
+            
+            // Strong hemispheric light for ambient lighting
+            const hemisphericLight = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(0, 1, 0), scene);
+            hemisphericLight.intensity = 0.6;
+            hemisphericLight.diffuse = new BABYLON.Color3(0.1, 0.2, 0.3); // Cool ambient
+            
+            // Primary directional light from top-right
+            const directionalLight1 = new BABYLON.DirectionalLight("dirLight1", new BABYLON.Vector3(-1, -1, -1), scene);
+            directionalLight1.intensity = 1.2;
+            directionalLight1.position = new BABYLON.Vector3(20, 20, 20);
+            directionalLight1.diffuse = new BABYLON.Color3(1, 1, 1);
+            directionalLight1.specular = new BABYLON.Color3(1, 1, 1);
+            
+            // Secondary directional light from left for crystalline facets
+            const directionalLight2 = new BABYLON.DirectionalLight("dirLight2", new BABYLON.Vector3(1, 0, -1), scene);
+            directionalLight2.intensity = 0.8;
+            directionalLight2.position = new BABYLON.Vector3(-15, 10, 15);
+            directionalLight2.diffuse = new BABYLON.Color3(0.8, 0.9, 1);
+            
+            // Rim light from behind for crystal edge definition
+            const directionalLight3 = new BABYLON.DirectionalLight("dirLight3", new BABYLON.Vector3(0, 1, 1), scene);
+            directionalLight3.intensity = 0.6;
+            directionalLight3.position = new BABYLON.Vector3(0, -15, -15);
+            directionalLight3.diffuse = new BABYLON.Color3(0.2, 0.6, 1);
+            
+            // Enable shadows for primary light
+            const shadowGenerator = new BABYLON.ShadowGenerator(2048, directionalLight1);
+            shadowGenerator.usePercentageCloserFiltering = true;
+            shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_HIGH;
+            
+            // Point lights for multi-directional illumination
+            const pointLight1 = new BABYLON.PointLight("pointLight1", new BABYLON.Vector3(3, 3, 3), scene);
+            pointLight1.intensity = 0.8;
+            pointLight1.diffuse = new BABYLON.Color3(1, 1, 1);
+            pointLight1.specular = new BABYLON.Color3(1, 1, 1);
+            
+            const pointLight2 = new BABYLON.PointLight("pointLight2", new BABYLON.Vector3(-3, -2, 3), scene);
+            pointLight2.intensity = 0.6;
+            pointLight2.diffuse = new BABYLON.Color3(0.5, 0.8, 1);
+        }
+        
+        async function createBitGeometry(state) {
+            // Remove existing mesh
+            if (bitMesh) {
+                bitMesh.dispose();
+            }
+            
+            // Apply glow effect to container
+            const container = document.body;
+            container.className = container.className.replace(/bit-glow-\w+/g, '');
+            container.classList.add(`bit-glow-${state}`);
+            
+            let mesh, material;
+            
+            // Load actual OBJ files for authentic geometry
+            const objFiles = {
+                'neutral': 'tron_bit_neutral_icosahedron.obj',
+                'yes': 'tron_bit_yes_octahedron.obj', 
+                'no': 'tron_bit_no_compound_tetrahedra.obj'
+            };
+            
+            // Use built-in geometry for now (OBJ files may be incomplete)
+            switch(state) {
+                case 'neutral':
+                    mesh = BABYLON.MeshBuilder.CreateIcoSphere("icosahedron", {
+                        radius: 1.5,
+                        subdivisions: 0
+                    }, scene);
+                    break;
+                case 'yes':
+                    mesh = BABYLON.MeshBuilder.CreateOctahedron("octahedron", {
+                        size: 2
+                    }, scene);
+                    break;
+                case 'no':
+                    mesh = createCompoundTetrahedra();
+                    break;
+            }
+            
+            // Create simple material for debugging
+            material = new BABYLON.StandardMaterial(`${state}Material`, scene);
+            
+            switch(state) {
+                case 'neutral':
+                    material.diffuseColor = new BABYLON.Color3(0, 0.8, 1);
+                    material.emissiveColor = new BABYLON.Color3(0, 0.2, 0.4);
+                    rotationSpeed = 0.01;
+                    break;
+                    
+                case 'yes':
+                    material.diffuseColor = new BABYLON.Color3(1, 1, 0);
+                    material.emissiveColor = new BABYLON.Color3(0.3, 0.3, 0);
+                    rotationSpeed = 0.03;
+                    break;
+                    
+                case 'no':
+                    material.diffuseColor = new BABYLON.Color3(1, 0, 0);
+                    material.emissiveColor = new BABYLON.Color3(0.3, 0, 0);
+                    rotationSpeed = 0.02;
+                    break;
+            }
+            
+            console.log(`Created ${state} material and mesh`);
+            
+            mesh.material = material;
+            
+            // Enable shadows and enhanced lighting effects
+            mesh.receiveShadows = true;
+            
+            // Add to shadow generators for casting shadows
+            const shadowGenerator = scene.lights.find(light => light.name === 'dirLight1')?.getShadowGenerator();
+            if (shadowGenerator) {
+                shadowGenerator.addShadowCaster(mesh);
+            }
+            
+            bitMesh = mesh;
+            currentState = state;
+        }
+        
+        // Create compound of tetrahedra for NO state
+        function createCompoundTetrahedra() {
+            const compound = new BABYLON.Mesh("compound", scene);
+            
+            // Create 5 tetrahedra in icosahedral symmetry
+            const positions = [
+                new BABYLON.Vector3(0, 2, 0),
+                new BABYLON.Vector3(1.9, 0.6, 0), 
+                new BABYLON.Vector3(1.2, -1.6, 0),
+                new BABYLON.Vector3(-1.2, -1.6, 0),
+                new BABYLON.Vector3(-1.9, 0.6, 0)
+            ];
+            
+            positions.forEach((pos, i) => {
+                const tetrahedron = BABYLON.MeshBuilder.CreatePolyhedron("tetra" + i, {
+                    type: 0, // Tetrahedron
+                    size: 0.8
+                }, scene);
+                
+                tetrahedron.position = pos;
+                tetrahedron.rotation.y = (i * Math.PI * 2) / 5;
+                tetrahedron.parent = compound;
+            });
+            
+            return compound;
+        }
+
+        function animate() {
+            if (bitMesh) {
+                // Smooth rotation
+                bitMesh.rotation.x += rotationSpeed;
+                bitMesh.rotation.y += rotationSpeed * 1.5;
+                
+                // Pulsing scale effect
+                const pulse = Math.sin(Date.now() * 0.003) * 0.1 + 1;
+                bitMesh.scaling = new BABYLON.Vector3(pulse, pulse, pulse);
+            }
+        }
+        
+        // Initialize on page load
+        window.addEventListener('load', init3D);
+
         // Create audio context for sound generation (fallback)
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
@@ -425,11 +676,10 @@
             }
         }
 
-        function sayYes() {
-            const shape = document.getElementById('bitShape');
+        async function sayYes() {
             const status = document.getElementById('status');
             
-            shape.className = 'shape yes';
+            await createBitGeometry('yes');
             status.textContent = 'YES!';
             status.style.color = '#ffff00';
             playYesSound();
@@ -439,17 +689,16 @@
             const rect = bit.getBoundingClientRect();
             createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ffff00');
             
-            setTimeout(() => {
-                shape.className = 'shape neutral';
+            setTimeout(async () => {
+                await createBitGeometry('neutral');
                 status.textContent = '';
             }, 1500);
         }
 
-        function sayNo() {
-            const shape = document.getElementById('bitShape');
+        async function sayNo() {
             const status = document.getElementById('status');
             
-            shape.className = 'shape no';
+            await createBitGeometry('no');
             status.textContent = 'NO!';
             status.style.color = '#ff0000';
             playNoSound();
@@ -459,8 +708,8 @@
             const rect = bit.getBoundingClientRect();
             createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ff0000');
             
-            setTimeout(() => {
-                shape.className = 'shape neutral';
+            setTimeout(async () => {
+                await createBitGeometry('neutral');
                 status.textContent = '';
             }, 1500);
         }
@@ -498,16 +747,16 @@
                 count++;
                 if (count >= maxCount) {
                     clearInterval(timer);
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         document.getElementById('status').textContent = '';
-                        document.getElementById('bitShape').className = 'shape neutral';
+                        await createBitGeometry('neutral');
                     }, 1500);
                 }
             }, interval); // Dynamic interval based on actual sped-up duration
         }
         
         // Excited versions with faster playback
-        function sayYesExcited() {
+        async function sayYesExcited() {
             const yesAudio = document.getElementById('yesSound');
             yesAudio.currentTime = 0;
             yesAudio.playbackRate = 1.33; // 33% faster
@@ -516,10 +765,9 @@
             });
             
             // Visual effects
-            const shape = document.getElementById('bitShape');
             const status = document.getElementById('status');
             
-            shape.className = 'shape yes';
+            await createBitGeometry('yes');
             status.style.color = '#ffff00';
             
             // Create particles
@@ -527,13 +775,13 @@
             const rect = bit.getBoundingClientRect();
             createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ffff00');
             
-            setTimeout(() => {
-                shape.className = 'shape neutral';
+            setTimeout(async () => {
+                await createBitGeometry('neutral');
                 yesAudio.playbackRate = 1.0; // Reset playback rate
             }, 600); // Shorter visual duration for excited mode
         }
         
-        function sayNoExcited() {
+        async function sayNoExcited() {
             const noAudio = document.getElementById('noSound');
             noAudio.currentTime = 0;
             noAudio.playbackRate = 1.33; // 33% faster
@@ -542,10 +790,9 @@
             });
             
             // Visual effects
-            const shape = document.getElementById('bitShape');
             const status = document.getElementById('status');
             
-            shape.className = 'shape no';
+            await createBitGeometry('no');
             status.style.color = '#ff0000';
             
             // Create particles
@@ -553,8 +800,8 @@
             const rect = bit.getBoundingClientRect();
             createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ff0000');
             
-            setTimeout(() => {
-                shape.className = 'shape neutral';
+            setTimeout(async () => {
+                await createBitGeometry('neutral');
                 noAudio.playbackRate = 1.0; // Reset playback rate
             }, 450); // Shorter visual duration for excited mode
         }
