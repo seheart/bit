@@ -8,64 +8,11 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #000000;
+    background: #000;
     color: #00ddff;
     font-family: 'Courier New', monospace;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     min-height: 100vh;
     overflow: hidden;
-    position: relative;
-  }
-
-
-  .container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 30px;
-    gap: 16px;
-    pointer-events: none;
-  }
-
-  .btn-math {
-    display: block;
-    text-align: center;
-    text-decoration: none;
-    background: transparent;
-    border: 1px solid #ffdd00;
-    color: #ffdd00;
-    padding: 8px 18px;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    transition: background 0.2s, box-shadow 0.2s;
-  }
-
-  .btn-math:hover {
-    background: rgba(255,221,0,0.12);
-    box-shadow: 0 0 10px rgba(255,221,0,0.3);
-  }
-
-  .container > * {
-    pointer-events: auto;
-  }
-
-  h1 {
-    font-size: 48px;
-    letter-spacing: 16px;
-    color: #00ddff;
-    text-shadow: 0 0 20px #00ddff, 0 0 40px #0088aa, 0 0 60px #005577;
   }
 
   #canvas {
@@ -78,40 +25,184 @@
     z-index: 0;
   }
 
-  #status {
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: 8px;
-    min-height: 36px;
-    transition: color 0.15s, text-shadow 0.15s;
+  /* ── Top bar: title + status ── */
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px;
+    pointer-events: none;
   }
 
-  .buttons {
+  h1 {
+    font-size: 36px;
+    letter-spacing: 12px;
+    color: #00ddff;
+    text-shadow: 0 0 16px #00ddff, 0 0 32px #005577;
+    pointer-events: auto;
+  }
+
+  #status {
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 10px;
+    transition: color 0.15s, text-shadow 0.15s;
+    pointer-events: none;
+  }
+
+  /* ── Bottom panel: input + controls ── */
+  .bottom-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    align-items: center;
+    gap: 14px;
+    padding: 0 24px 28px;
+    pointer-events: none;
   }
 
-  .buttons button {
-    background: transparent;
-    border: 1px solid #00ddff;
-    color: #00ddff;
-    padding: 8px 18px;
+  .bottom-panel > * {
+    pointer-events: auto;
+  }
+
+  /* Input row */
+  .ask-row {
+    display: flex;
+    gap: 0;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  #questionInput {
+    flex: 1;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid #224455;
+    border-right: none;
+    color: #fff;
+    padding: 14px 18px;
     font-family: 'Courier New', monospace;
-    font-size: 13px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  #questionInput::placeholder {
+    color: #33555f;
+    font-style: italic;
+  }
+
+  #questionInput:focus {
+    border-color: #00ddff;
+    box-shadow: 0 0 16px rgba(0,221,255,0.15);
+  }
+
+  #questionInput:focus + #btnSubmit {
+    border-color: #00ddff;
+  }
+
+  #btnSubmit {
+    background: rgba(0,221,255,0.08);
+    border: 1px solid #224455;
+    color: #00ddff;
+    padding: 14px 22px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  #btnSubmit:hover {
+    background: rgba(0,221,255,0.18);
+    box-shadow: 0 0 14px rgba(0,221,255,0.3);
+  }
+
+  #btnSubmit:disabled {
+    opacity: 0.25;
+    cursor: default;
+    box-shadow: none;
+  }
+
+  /* Button row */
+  .controls-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ctrl-btn {
+    background: transparent;
+    border: 1px solid #1a3344;
+    color: #447788;
+    padding: 8px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 2px;
-    transition: background 0.2s, box-shadow 0.2s;
+    transition: all 0.2s;
+    text-decoration: none;
   }
 
-  .buttons button:hover {
-    background: rgba(0,221,255,0.12);
-    box-shadow: 0 0 10px rgba(0,221,255,0.3);
+  .ctrl-btn:hover {
+    border-color: #00ddff;
+    color: #00ddff;
+    box-shadow: 0 0 8px rgba(0,221,255,0.2);
   }
 
-  .buttons button:active {
-    background: rgba(0,221,255,0.25);
+  .ctrl-btn:active {
+    background: rgba(0,221,255,0.15);
+  }
+
+  .ctrl-btn.accent {
+    border-color: #332d00;
+    color: #998800;
+  }
+
+  .ctrl-btn.accent:hover {
+    border-color: #ffdd00;
+    color: #ffdd00;
+    box-shadow: 0 0 8px rgba(255,221,0,0.2);
+  }
+
+  .ctrl-btn.speak {
+    border-color: #1a3344;
+    color: #447788;
+  }
+
+  .ctrl-btn.speak:hover {
+    border-color: #00ddff;
+    color: #00ddff;
+  }
+
+  .ctrl-btn.speak.listening {
+    border-color: #ff3300;
+    color: #ff3300;
+    animation: micPulse 1s ease-in-out infinite;
+  }
+
+  .ctrl-sep {
+    width: 1px;
+    height: 16px;
+    background: #1a2a33;
+    margin: 0 4px;
+  }
+
+  @keyframes micPulse {
+    0%, 100% { box-shadow: none; }
+    50% { box-shadow: 0 0 12px rgba(255,51,0,0.4); }
   }
 
   /* DOM particles */
@@ -135,14 +226,24 @@
 
 <canvas id="canvas"></canvas>
 
-<div class="container">
+<div class="top-bar">
   <h1>BIT</h1>
   <div id="status">&nbsp;</div>
-  <div class="buttons">
-    <button id="btnAsk">Yes</button>
-    <button id="btnChallenge">No</button>
-    <button id="btnExcite">Excite</button>
-    <a href="math.html" class="btn-math">Math</a>
+</div>
+
+<div class="bottom-panel">
+  <div class="ask-row">
+    <input type="text" id="questionInput" placeholder="Ask Bit a question..." autocomplete="off" />
+    <button id="btnSubmit">Ask</button>
+  </div>
+  <div class="controls-row">
+    <button class="ctrl-btn speak" id="btnSpeak">Speak</button>
+    <div class="ctrl-sep"></div>
+    <button class="ctrl-btn" id="btnAsk">Yes</button>
+    <button class="ctrl-btn" id="btnChallenge">No</button>
+    <button class="ctrl-btn" id="btnExcite">Excite</button>
+    <div class="ctrl-sep"></div>
+    <a href="math.html" class="ctrl-btn accent">Math</a>
   </div>
 </div>
 
@@ -574,6 +675,11 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.repeat) return;
+    // Don't trigger shortcuts while typing in the input
+    if (document.activeElement === questionInput) {
+      if (e.key === 'Enter') submitQuestion();
+      return;
+    }
     switch (e.key.toLowerCase()) {
       case 'y': respond(STATE_YES, false); break;
       case 'n': respond(STATE_NO, false); break;
@@ -594,6 +700,162 @@
   document.getElementById('btnExcite').addEventListener('click', function () {
     excite();
   });
+
+  // ── AI Decision Maker ─────────────────────────────────────
+
+  var WORKER_URL = 'https://bit-oracle.seheart.workers.dev';
+  var questionInput = document.getElementById('questionInput');
+  var btnSubmit = document.getElementById('btnSubmit');
+  var btnSpeak = document.getElementById('btnSpeak');
+  var isDeliberating = false;
+  var deliberationInterval = null;
+  var deliberationToggle = false;
+
+  function setAskEnabled(enabled) {
+    btnSubmit.disabled = !enabled;
+    questionInput.disabled = !enabled;
+  }
+
+  function startDeliberation() {
+    if (responseTimer) {
+      clearTimeout(responseTimer);
+      responseTimer = null;
+    }
+    isDeliberating = true;
+    deliberationToggle = false;
+    setAskEnabled(false);
+
+    ensureAudioContext();
+
+    deliberationInterval = setInterval(function () {
+      deliberationToggle = !deliberationToggle;
+      var state = deliberationToggle ? STATE_YES : STATE_NO;
+      setMesh(state);
+      updateStatus(state);
+      playSound(state, true);
+    }, 280);
+  }
+
+  function settleDeliberation(finalState) {
+    clearInterval(deliberationInterval);
+    deliberationInterval = null;
+
+    // Brief pause, then commit to the final answer
+    isDeliberating = false;
+    setTimeout(function () {
+      setMesh(finalState);
+      updateStatus(finalState);
+      playSound(finalState, false);
+      spawnParticles(finalState);
+      spawnParticles(finalState);
+
+      responseTimer = setTimeout(function () {
+        setMesh(STATE_NEUTRAL);
+        updateStatus(STATE_NEUTRAL);
+        responseTimer = null;
+      }, 3000);
+
+      setAskEnabled(true);
+    }, 300);
+  }
+
+  function submitQuestion() {
+    var question = questionInput.value.trim();
+    if (!question || isDeliberating || isExcited) return;
+    questionInput.blur();
+    askBit(question);
+  }
+
+  function askBit(question) {
+    startDeliberation();
+
+    fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: question }),
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      var finalState = (data.answer === 'no') ? STATE_NO : STATE_YES;
+      // Small delay so deliberation runs for at least 1.5s
+      var elapsed = 0;
+      var minTime = 1500;
+      var check = function () {
+        if (elapsed >= minTime) {
+          settleDeliberation(finalState);
+        } else {
+          setTimeout(check, minTime - elapsed);
+          elapsed = minTime;
+        }
+      };
+      check();
+    })
+    .catch(function () {
+      // Fallback: random answer
+      var finalState = Math.random() < 0.5 ? STATE_YES : STATE_NO;
+      settleDeliberation(finalState);
+    });
+  }
+
+  btnSubmit.addEventListener('click', submitQuestion);
+
+  // ── Voice Input ─────────────────────────────────────────────
+
+  var recognition = null;
+  var isListening = false;
+
+  function setupVoice() {
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      btnSpeak.style.display = 'none';
+      return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function (event) {
+      var transcript = event.results[0][0].transcript;
+      questionInput.value = transcript;
+      stopListening();
+      askBit(transcript);
+    };
+
+    recognition.onerror = function () {
+      stopListening();
+    };
+
+    recognition.onend = function () {
+      stopListening();
+    };
+  }
+
+  function startListening() {
+    if (!recognition || isDeliberating) return;
+    isListening = true;
+    btnSpeak.classList.add('listening');
+    btnSpeak.textContent = 'Listening...';
+    try { recognition.start(); } catch (_) {}
+  }
+
+  function stopListening() {
+    isListening = false;
+    btnSpeak.classList.remove('listening');
+    btnSpeak.textContent = 'Speak';
+    try { recognition.stop(); } catch (_) {}
+  }
+
+  btnSpeak.addEventListener('click', function () {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  });
+
+  setupVoice();
 
   // ── Animation loop ─────────────────────────────────────────
 
