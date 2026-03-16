@@ -1,384 +1,618 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bit from TRON - Proper Three.js</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: radial-gradient(circle at center, #001133, #000011);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: 'Courier New', monospace;
-            overflow: hidden;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIT — TRON</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .container {
-            text-align: center;
-            position: relative;
-        }
+  body {
+    background: #000000;
+    color: #00ddff;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
 
-        /* Grid effect background */
-        .grid-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
-            animation: grid-pulse 4s ease-in-out infinite;
-        }
 
-        @keyframes grid-pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.1; }
-        }
+  .container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 30px;
+    gap: 16px;
+    pointer-events: none;
+  }
 
-        #bit-canvas {
-            width: 300px !important;
-            height: 300px !important;
-            border-radius: 10px;
-        }
+  .math-link {
+    position: fixed;
+    bottom: 24px;
+    left: 30px;
+    color: #335566;
+    font-size: 11px;
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    pointer-events: auto;
+  }
 
-        .bit-glow-neutral #bit-canvas {
-            filter: drop-shadow(0 0 25px rgba(0, 221, 255, 0.9)) 
-                    drop-shadow(0 0 35px rgba(0, 221, 255, 0.6));
-        }
+  .math-link:hover {
+    color: #00ddff;
+  }
 
-        .bit-glow-yes #bit-canvas {
-            filter: drop-shadow(0 0 30px rgba(255, 255, 0, 1)) 
-                    drop-shadow(0 0 40px rgba(255, 255, 0, 0.7));
-        }
+  .container > * {
+    pointer-events: auto;
+  }
 
-        .bit-glow-no #bit-canvas {
-            filter: drop-shadow(0 0 35px rgba(255, 0, 0, 1)) 
-                    drop-shadow(0 0 45px rgba(255, 0, 0, 0.8));
-        }
+  h1 {
+    font-size: 48px;
+    letter-spacing: 16px;
+    color: #00ddff;
+    text-shadow: 0 0 20px #00ddff, 0 0 40px #0088aa, 0 0 60px #005577;
+  }
 
-        #status {
-            margin-top: 30px;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 0 0 10px currentColor;
-            height: 30px;
-            color: #00ffff;
-        }
+  #canvas {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 0;
+  }
 
-        .controls {
-            margin-top: 40px;
-        }
+  #status {
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 8px;
+    min-height: 36px;
+    transition: color 0.15s, text-shadow 0.15s;
+  }
 
-        button {
-            background: rgba(0, 255, 255, 0.2);
-            border: 2px solid #00ffff;
-            color: #00ffff;
-            padding: 12px 24px;
-            margin: 0 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-        button:hover {
-            background: rgba(0, 255, 255, 0.3);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-        }
+  .buttons button {
+    background: transparent;
+    border: 1px solid #00ddff;
+    color: #00ddff;
+    padding: 8px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
 
-    </style>
+  .buttons button:hover {
+    background: rgba(0,221,255,0.12);
+    box-shadow: 0 0 10px rgba(0,221,255,0.3);
+  }
+
+  .buttons button:active {
+    background: rgba(0,221,255,0.25);
+  }
+
+  /* DOM particles */
+  .particle {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 100;
+    animation: particleFly 0.8s ease-out forwards;
+  }
+
+  @keyframes particleFly {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+  }
+</style>
 </head>
 <body>
-    <div class="grid-bg"></div>
-    
-    <div class="container bit-glow-neutral">
-        <canvas id="bit-canvas" width="300" height="300"></canvas>
-        <div id="status"></div>
-        
-        <div class="controls">
-            <button onclick="sayYes()">Ask Question</button>
-            <button onclick="sayNo()">Challenge Bit</button>
-            <button onclick="randomResponse()">Random</button>
-            <button onclick="rapidResponse()">Excite</button>
-        </div>
-    </div>
 
-    <audio id="yesSound" preload="auto">
-        <source src="bit-yes.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="noSound" preload="auto">
-        <source src="bit-no.mp3" type="audio/mpeg">
-    </audio>
+<canvas id="canvas"></canvas>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>
-        console.log("Starting Three.js implementation...");
-        
-        let scene, camera, renderer, bitMesh;
-        let currentState = 'neutral';
-        let rotationSpeed = 0.01;
+<div class="container">
+  <h1>BIT</h1>
+  <div id="status">&nbsp;</div>
+  <div class="buttons">
+    <button id="btnAsk">Yes</button>
+    <button id="btnChallenge">No</button>
+    <button id="btnExcite">Excite</button>
+  </div>
+  <a href="math.html" class="math-link">Mathematics</a>
+</div>
 
-        // Initialize Three.js
-        function init3D() {
-            console.log("Initializing Three.js...");
-            
-            const canvas = document.getElementById('bit-canvas');
-            if (!canvas) {
-                console.error("Canvas not found!");
-                return;
-            }
-            
-            if (!window.THREE) {
-                console.error("Three.js not loaded!");
-                return;
-            }
-            
-            // Scene
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x000011);
-            
-            // Camera
-            camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            camera.position.z = 5;
-            
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-            renderer.setSize(300, 300);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            
-            // Lighting
-            setupLighting();
-            
-            // Create initial geometry
-            createBitGeometry('neutral');
-            
-            // Animation loop
-            animate();
-            
-            console.log("Three.js initialized successfully!");
-        }
-        
-        function setupLighting() {
-            // Ambient light
-            const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
-            scene.add(ambientLight);
-            
-            // Main directional light
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(10, 10, 5);
-            directionalLight.castShadow = true;
-            directionalLight.shadow.mapSize.width = 2048;
-            directionalLight.shadow.mapSize.height = 2048;
-            scene.add(directionalLight);
-            
-            // Fill light from opposite side
-            const fillLight = new THREE.DirectionalLight(0x4080ff, 0.3);
-            fillLight.position.set(-5, -5, -5);
-            scene.add(fillLight);
-            
-            // Point light for rim lighting
-            const pointLight = new THREE.PointLight(0x00ffff, 0.5, 100);
-            pointLight.position.set(0, 0, 10);
-            scene.add(pointLight);
-        }
-        
-        function createBitGeometry(state) {
-            console.log(`Creating ${state} geometry...`);
-            
-            // Remove existing mesh
-            if (bitMesh) {
-                scene.remove(bitMesh);
-                bitMesh.geometry.dispose();
-                bitMesh.material.dispose();
-            }
-            
-            let geometry, material;
-            
-            switch(state) {
-                case 'neutral':
-                    // Authentic stellated icosahedron: base icosahedron + 20 triangular spike pyramids
-                    geometry = createStellatedIcosahedronFromPaper();
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0x00ccff,
-                        emissive: 0x003366,
-                        shininess: 150,
-                        transparent: true,
-                        opacity: 0.85,
-                        flatShading: true
-                    });
-                    rotationSpeed = 0.008;
-                    break;
-                    
-                case 'yes':
-                    // Basic octahedron
-                    geometry = new THREE.OctahedronGeometry(2.4, 0);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0xffdd00,
-                        emissive: 0x554400,
-                        shininess: 200,
-                        transparent: true,
-                        opacity: 0.9,
-                        flatShading: true
-                    });
-                    rotationSpeed = 0.025;
-                    break;
-                    
-                case 'no':
-                    // Basic dodecahedron
-                    geometry = new THREE.DodecahedronGeometry(1.8, 0);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0xff3300,
-                        emissive: 0x551100,
-                        shininess: 120,
-                        transparent: true,
-                        opacity: 0.85,
-                        flatShading: true
-                    });
-                    rotationSpeed = 0.015;
-                    break;
-            }
-            
-            bitMesh = new THREE.Mesh(geometry, material);
-            bitMesh.castShadow = true;
-            bitMesh.receiveShadow = true;
-            scene.add(bitMesh);
-            
-            // Apply glow effect to container
-            const container = document.querySelector('.container');
-            container.className = container.className.replace(/bit-glow-\w+/g, '');
-            container.classList.add(`bit-glow-${state}`);
-            
-            currentState = state;
-            console.log(`${state} geometry created successfully`);
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            if (bitMesh) {
-                const time = Date.now() * 0.001;
-                
-                // Base rotation
-                bitMesh.rotation.x += rotationSpeed;
-                bitMesh.rotation.y += rotationSpeed * 1.5;
-                
-                // Gentle floating
-                bitMesh.position.y = Math.sin(time) * 0.2;
-                
-                // Simple rotation only
-                // Complex vertex animation breaks the geometry
-            }
-            
-            renderer.render(scene, camera);
-        }
-        
-        function createStellatedIcosahedronFromPaper() {
-            // Basic icosahedron - complex vertex morphing breaks WebGL
-            return new THREE.IcosahedronGeometry(1.8, 0);
-        }
-        
-        // Response functions
-        function sayYes() {
-            createBitGeometry('yes');
-            document.getElementById('status').textContent = 'YES!';
-            document.getElementById('status').style.color = '#ffff00';
-            
-            const yesAudio = document.getElementById('yesSound');
-            yesAudio.currentTime = 0;
-            yesAudio.play().catch(() => {
-                console.log('Audio play failed');
-            });
-            
-            setTimeout(() => {
-                createBitGeometry('neutral');
-                document.getElementById('status').textContent = '';
-            }, 1500);
-        }
+<!-- Audio -->
+<audio id="audioYes" preload="auto" src="bit-yes.mp3"></audio>
+<audio id="audioNo" preload="auto" src="bit-no.mp3"></audio>
 
-        function sayNo() {
-            createBitGeometry('no');
-            document.getElementById('status').textContent = 'NO!';
-            document.getElementById('status').style.color = '#ff0000';
-            
-            const noAudio = document.getElementById('noSound');
-            noAudio.currentTime = 0;
-            noAudio.play().catch(() => {
-                console.log('Audio play failed');
-            });
-            
-            setTimeout(() => {
-                createBitGeometry('neutral');
-                document.getElementById('status').textContent = '';
-            }, 1500);
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ── Constants ──────────────────────────────────────────────
+  var PHI = (1 + Math.sqrt(5)) / 2;
+  var STATE_NEUTRAL = 'neutral';
+  var STATE_YES = 'yes';
+  var STATE_NO = 'no';
+
+  var COLORS = {
+    neutral: { color: 0x00ddff, emissive: 0x003366 },
+    yes:     { color: 0xffdd00, emissive: 0x554400 },
+    no:      { color: 0xff3300, emissive: 0x551100 }
+  };
+
+  var ROTATION_SPEEDS = { neutral: 0.008, yes: 0.025, no: 0.015 };
+  var RESPONSE_DURATION = 1500;
+  var EXCITE_INTERVAL = 440;
+  var EXCITE_COUNT = 5;
+
+  // ── DOM refs ───────────────────────────────────────────────
+  var canvas = document.getElementById('canvas');
+  var statusEl = document.getElementById('status');
+  var audioYes = document.getElementById('audioYes');
+  var audioNo = document.getElementById('audioNo');
+
+  // ── Audio (lazy AudioContext) ──────────────────────────────
+  var audioCtx = null;
+
+  function ensureAudioContext() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  function playSound(type, excited) {
+    var el = (type === STATE_YES) ? audioYes : audioNo;
+    var rate = excited ? 1.33 : 1.0;
+    try {
+      el.currentTime = 0;
+      el.playbackRate = rate;
+      var p = el.play();
+      if (p && p.catch) p.catch(function () { fallbackOscillator(type, excited); });
+    } catch (_) {
+      fallbackOscillator(type, excited);
+    }
+  }
+
+  function fallbackOscillator(type, excited) {
+    ensureAudioContext();
+    if (!audioCtx) return;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'square';
+    var baseFreq = (type === STATE_YES) ? 880 : 220;
+    osc.frequency.value = excited ? baseFreq * 1.33 : baseFreq;
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.35);
+  }
+
+  // ── Three.js setup ─────────────────────────────────────────
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+
+  var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 7);
+
+  window.addEventListener('resize', function () {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0x404040, 0.4));
+
+  var mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
+  mainLight.position.set(2, 3, 2);
+  scene.add(mainLight);
+
+  var fillLight = new THREE.DirectionalLight(0x4488cc, 0.3);
+  fillLight.position.set(-2, -1, -2);
+  scene.add(fillLight);
+
+  var rimLight = new THREE.PointLight(0x00ddff, 0.5, 20);
+  rimLight.position.set(0, 2, 4);
+  scene.add(rimLight);
+
+  // ── Geometry helpers ───────────────────────────────────────
+
+  function pushTri(arr, a, b, c) {
+    arr.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
+  }
+
+  function buildBufferGeo(positions) {
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+    geo.computeVertexNormals();
+    return geo;
+  }
+
+  // ── Stellated icosahedron (Neutral) ────────────────────────
+
+  function createStellatedIcosahedron(spikeHeight) {
+    var base = new THREE.IcosahedronGeometry(1, 0);
+    var posAttr = base.getAttribute('position');
+    var indexAttr = base.getIndex();
+
+    // Extract unique vertices
+    var verts = [];
+    var seen = {};
+    var indexMap = [];
+    for (var i = 0; i < posAttr.count; i++) {
+      var x = posAttr.getX(i), y = posAttr.getY(i), z = posAttr.getZ(i);
+      var key = x.toFixed(5) + ',' + y.toFixed(5) + ',' + z.toFixed(5);
+      if (seen[key] === undefined) {
+        seen[key] = verts.length;
+        verts.push(new THREE.Vector3(x, y, z));
+      }
+      indexMap.push(seen[key]);
+    }
+
+    // Build face list
+    var faces = [];
+    if (indexAttr) {
+      for (var i = 0; i < indexAttr.count; i += 3) {
+        faces.push([
+          indexMap[indexAttr.getX(i)],
+          indexMap[indexAttr.getX(i + 1)],
+          indexMap[indexAttr.getX(i + 2)]
+        ]);
+      }
+    } else {
+      for (var i = 0; i < posAttr.count; i += 3) {
+        faces.push([indexMap[i], indexMap[i + 1], indexMap[i + 2]]);
+      }
+    }
+
+    var positions = [];
+    var v1 = new THREE.Vector3(), v2 = new THREE.Vector3(), v3 = new THREE.Vector3();
+    var center = new THREE.Vector3(), normal = new THREE.Vector3();
+    var edge1 = new THREE.Vector3(), edge2 = new THREE.Vector3();
+
+    for (var i = 0; i < faces.length; i++) {
+      v1.copy(verts[faces[i][0]]);
+      v2.copy(verts[faces[i][1]]);
+      v3.copy(verts[faces[i][2]]);
+
+      center.set(0, 0, 0).add(v1).add(v2).add(v3).divideScalar(3);
+      edge1.subVectors(v2, v1);
+      edge2.subVectors(v3, v1);
+      normal.crossVectors(edge1, edge2).normalize();
+
+      // Ensure outward-pointing
+      if (normal.dot(center) < 0) normal.negate();
+
+      var apex = center.clone().addScaledVector(normal, spikeHeight);
+
+      pushTri(positions, v1, v2, apex);
+      pushTri(positions, v2, v3, apex);
+      pushTri(positions, v3, v1, apex);
+    }
+
+    base.dispose();
+    return buildBufferGeo(positions);
+  }
+
+  // ── Stellated dodecahedron (NO) ────────────────────────────
+
+  // Seeded random for deterministic spike variation per face
+  function seededRandom(seed) {
+    var x = Math.sin(seed * 127.1 + seed * 311.7) * 43758.5453;
+    return x - Math.floor(x);
+  }
+
+  function createStellatedDodecahedron(baseSpikeHeight) {
+    var base = new THREE.DodecahedronGeometry(1, 0);
+    var posAttr = base.getAttribute('position');
+    var indexAttr = base.getIndex();
+
+    // Collect all triangles from Three.js triangulation
+    var triangles = [];
+    if (indexAttr) {
+      for (var i = 0; i < indexAttr.count; i += 3) {
+        var a = indexAttr.getX(i), b = indexAttr.getX(i + 1), c = indexAttr.getX(i + 2);
+        triangles.push([
+          new THREE.Vector3(posAttr.getX(a), posAttr.getY(a), posAttr.getZ(a)),
+          new THREE.Vector3(posAttr.getX(b), posAttr.getY(b), posAttr.getZ(b)),
+          new THREE.Vector3(posAttr.getX(c), posAttr.getY(c), posAttr.getZ(c))
+        ]);
+      }
+    } else {
+      for (var i = 0; i < posAttr.count; i += 3) {
+        triangles.push([
+          new THREE.Vector3(posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i)),
+          new THREE.Vector3(posAttr.getX(i + 1), posAttr.getY(i + 1), posAttr.getZ(i + 1)),
+          new THREE.Vector3(posAttr.getX(i + 2), posAttr.getY(i + 2), posAttr.getZ(i + 2))
+        ]);
+      }
+    }
+
+    // Group triangles by pentagonal face (same face normal + proximity)
+    var assigned = [];
+    for (var i = 0; i < triangles.length; i++) assigned.push(false);
+    var faceGroups = [];
+
+    for (var i = 0; i < triangles.length; i++) {
+      if (assigned[i]) continue;
+      var tri = triangles[i];
+      var n = computeTriNormal(tri[0], tri[1], tri[2]);
+      var c = computeTriCenter(tri[0], tri[1], tri[2]);
+      var group = [i];
+      assigned[i] = true;
+
+      for (var j = i + 1; j < triangles.length; j++) {
+        if (assigned[j]) continue;
+        var n2 = computeTriNormal(triangles[j][0], triangles[j][1], triangles[j][2]);
+        if (Math.abs(n.dot(n2) - 1) < 0.05) {
+          var c2 = computeTriCenter(triangles[j][0], triangles[j][1], triangles[j][2]);
+          if (c.distanceTo(c2) < 1.2) {
+            group.push(j);
+            assigned[j] = true;
+          }
         }
+      }
+      faceGroups.push(group);
+    }
 
-        function randomResponse() {
-            if (Math.random() > 0.5) {
-                sayYes();
-            } else {
-                sayNo();
-            }
-        }
+    // Stellate each pentagonal face group with varying spike heights
+    var positions = [];
 
-        function rapidResponse() {
-            const responses = Math.random() > 0.5;
-            let count = 0;
-            const maxCount = 5;
-            
-            const timer = setInterval(() => {
-                if (responses) {
-                    createBitGeometry('yes');
-                    document.getElementById('status').textContent = 'YES! '.repeat(count + 1);
-                    document.getElementById('status').style.color = '#ffff00';
-                } else {
-                    createBitGeometry('no');
-                    document.getElementById('status').textContent = 'NO! '.repeat(count + 1);
-                    document.getElementById('status').style.color = '#ff0000';
-                }
-                
-                count++;
-                if (count >= maxCount) {
-                    clearInterval(timer);
-                    setTimeout(() => {
-                        createBitGeometry('neutral');
-                        document.getElementById('status').textContent = '';
-                    }, 1500);
-                }
-            }, 400);
-        }
+    for (var g = 0; g < faceGroups.length; g++) {
+      var groupIndices = faceGroups[g];
 
-        // Keyboard controls
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'y' || e.key === 'Y') sayYes();
-            if (e.key === 'n' || e.key === 'N') sayNo();
-            if (e.key === ' ') randomResponse();
-            if (e.key === 'e' || e.key === 'E') rapidResponse();
-        });
+      // Compute pentagon center
+      var faceCenter = new THREE.Vector3();
+      var vertCount = 0;
+      for (var t = 0; t < groupIndices.length; t++) {
+        var tri = triangles[groupIndices[t]];
+        faceCenter.add(tri[0]).add(tri[1]).add(tri[2]);
+        vertCount += 3;
+      }
+      faceCenter.divideScalar(vertCount);
 
-        // Click to interact
-        document.getElementById('bit-canvas').addEventListener('click', randomResponse);
-        
-        // Initialize when page loads
-        window.addEventListener('load', () => {
-            console.log("Page loaded, initializing...");
-            init3D();
-        });
-        
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (renderer) {
-                renderer.setSize(300, 300);
-            }
-        });
-    </script>
+      // Face normal from first triangle, pointing outward
+      var firstTri = triangles[groupIndices[0]];
+      var faceNormal = computeTriNormal(firstTri[0], firstTri[1], firstTri[2]);
+      if (faceNormal.dot(faceCenter) < 0) faceNormal.negate();
+
+      // Vary spike height per face: some short, some very long
+      // Range from 0.8x to 1.8x of base height for aggressive variation
+      var variation = seededRandom(g * 7 + 3);
+      var spikeHeight = baseSpikeHeight * (0.8 + variation * 1.0);
+
+      var apex = faceCenter.clone().addScaledVector(faceNormal, spikeHeight);
+
+      // Build spike triangles — narrow, sharp spikes
+      for (var t = 0; t < groupIndices.length; t++) {
+        var tri = triangles[groupIndices[t]];
+        pushTri(positions, tri[0], tri[1], apex);
+        pushTri(positions, tri[1], tri[2], apex);
+        pushTri(positions, tri[2], tri[0], apex);
+      }
+    }
+
+    base.dispose();
+    return buildBufferGeo(positions);
+  }
+
+  function computeTriNormal(a, b, c) {
+    var e1 = new THREE.Vector3().subVectors(b, a);
+    var e2 = new THREE.Vector3().subVectors(c, a);
+    return new THREE.Vector3().crossVectors(e1, e2).normalize();
+  }
+
+  function computeTriCenter(a, b, c) {
+    return new THREE.Vector3().add(a).add(b).add(c).divideScalar(3);
+  }
+
+  // ── State management ───────────────────────────────────────
+  var currentState = STATE_NEUTRAL;
+  var currentMesh = null;
+  var responseTimer = null;
+  var isExcited = false;
+
+  function createMaterial(state) {
+    var c = COLORS[state];
+    return new THREE.MeshPhongMaterial({
+      color: c.color,
+      emissive: c.emissive,
+      flatShading: true,
+      transparent: true,
+      opacity: 0.92,
+      shininess: 80,
+      side: THREE.DoubleSide
+    });
+  }
+
+  function createGeometry(state) {
+    switch (state) {
+      case STATE_YES: return new THREE.OctahedronGeometry(1.2, 0);
+      case STATE_NO:  return createStellatedDodecahedron(1.8);
+      default:        return createStellatedIcosahedron(0.3);
+    }
+  }
+
+  function setMesh(state) {
+    if (currentMesh) {
+      currentMesh.geometry.dispose();
+      currentMesh.material.dispose();
+      scene.remove(currentMesh);
+    }
+    var geo = createGeometry(state);
+    var mat = createMaterial(state);
+    currentMesh = new THREE.Mesh(geo, mat);
+    scene.add(currentMesh);
+    currentState = state;
+  }
+
+  function updateStatus(state) {
+    if (state === STATE_YES) {
+      statusEl.textContent = 'YES!';
+      statusEl.style.color = '#ffdd00';
+      statusEl.style.textShadow = '0 0 12px #ffdd00, 0 0 24px #aa8800';
+    } else if (state === STATE_NO) {
+      statusEl.textContent = 'NO!';
+      statusEl.style.color = '#ff3300';
+      statusEl.style.textShadow = '0 0 12px #ff3300, 0 0 24px #aa1100';
+    } else {
+      statusEl.innerHTML = '&nbsp;';
+      statusEl.style.color = '#00ddff';
+      statusEl.style.textShadow = 'none';
+    }
+  }
+
+  // ── Particles ──────────────────────────────────────────────
+
+  function spawnParticles(state) {
+    var rect = canvas.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    var color = (state === STATE_YES) ? '#ffdd00' : '#ff3300';
+
+    for (var i = 0; i < 16; i++) {
+      var el = document.createElement('div');
+      el.className = 'particle';
+      var angle = (Math.PI * 2 * i) / 16 + (Math.random() - 0.5) * 0.4;
+      var dist = 60 + Math.random() * 80;
+      el.style.left = cx + 'px';
+      el.style.top = cy + 'px';
+      el.style.background = color;
+      el.style.boxShadow = '0 0 6px ' + color;
+      el.style.setProperty('--dx', (Math.cos(angle) * dist) + 'px');
+      el.style.setProperty('--dy', (Math.sin(angle) * dist) + 'px');
+      document.body.appendChild(el);
+      el.addEventListener('animationend', function () { this.remove(); });
+    }
+  }
+
+  // ── Response logic ─────────────────────────────────────────
+
+  function respond(type, excited) {
+    if (responseTimer) {
+      clearTimeout(responseTimer);
+      responseTimer = null;
+    }
+
+    ensureAudioContext();
+    var state = (type === 'random')
+      ? (Math.random() < 0.5 ? STATE_YES : STATE_NO)
+      : type;
+
+    setMesh(state);
+    updateStatus(state);
+    playSound(state, excited);
+    spawnParticles(state);
+
+    responseTimer = setTimeout(function () {
+      setMesh(STATE_NEUTRAL);
+      updateStatus(STATE_NEUTRAL);
+      responseTimer = null;
+    }, RESPONSE_DURATION);
+  }
+
+  function excite() {
+    if (isExcited) return;
+    isExcited = true;
+    var count = 0;
+
+    function next() {
+      if (count >= EXCITE_COUNT) {
+        isExcited = false;
+        return;
+      }
+      count++;
+      respond('random', true);
+      if (count < EXCITE_COUNT) {
+        setTimeout(next, EXCITE_INTERVAL);
+      } else {
+        isExcited = false;
+      }
+    }
+    next();
+  }
+
+  // ── Controls ───────────────────────────────────────────────
+
+  canvas.addEventListener('click', function () { respond('random', false); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.repeat) return;
+    switch (e.key.toLowerCase()) {
+      case 'y': respond(STATE_YES, false); break;
+      case 'n': respond(STATE_NO, false); break;
+      case ' ':
+        e.preventDefault();
+        respond('random', false);
+        break;
+      case 'e': excite(); break;
+    }
+  });
+
+  document.getElementById('btnAsk').addEventListener('click', function () {
+    respond(STATE_YES, false);
+  });
+  document.getElementById('btnChallenge').addEventListener('click', function () {
+    respond(STATE_NO, false);
+  });
+  document.getElementById('btnExcite').addEventListener('click', function () {
+    excite();
+  });
+
+  // ── Animation loop ─────────────────────────────────────────
+
+  var clock = new THREE.Clock();
+  setMesh(STATE_NEUTRAL);
+
+  function animate() {
+    requestAnimationFrame(animate);
+    var t = clock.getElapsedTime();
+    var speed = ROTATION_SPEEDS[currentState] || ROTATION_SPEEDS.neutral;
+
+    if (currentMesh) {
+      currentMesh.rotation.y += speed;
+      currentMesh.rotation.x += speed * 0.4;
+      currentMesh.position.y = Math.sin(t * 1.5) * 0.15;
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+})();
+</script>
 </body>
 </html>
