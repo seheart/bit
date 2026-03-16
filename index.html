@@ -36,21 +36,25 @@
     pointer-events: none;
   }
 
-  .math-link {
-    position: fixed;
-    bottom: 24px;
-    left: 30px;
-    color: #335566;
-    font-size: 11px;
+  .btn-math {
+    display: block;
+    text-align: center;
     text-decoration: none;
-    letter-spacing: 2px;
+    background: transparent;
+    border: 1px solid #ffdd00;
+    color: #ffdd00;
+    padding: 8px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    cursor: pointer;
     text-transform: uppercase;
-    transition: color 0.2s;
-    pointer-events: auto;
+    letter-spacing: 2px;
+    transition: background 0.2s, box-shadow 0.2s;
   }
 
-  .math-link:hover {
-    color: #00ddff;
+  .btn-math:hover {
+    background: rgba(255,221,0,0.12);
+    box-shadow: 0 0 10px rgba(255,221,0,0.3);
   }
 
   .container > * {
@@ -138,8 +142,8 @@
     <button id="btnAsk">Yes</button>
     <button id="btnChallenge">No</button>
     <button id="btnExcite">Excite</button>
+    <a href="math.html" class="btn-math">Math</a>
   </div>
-  <a href="math.html" class="math-link">Mathematics</a>
 </div>
 
 <!-- Audio -->
