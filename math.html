@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mathematics of Bit</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
@@ -14,132 +15,288 @@
     ]
   });"></script>
 <style>
+  :root {
+    --bg: #000;
+    --panel: #060e12;
+    --panel-2: #0a1a1f;
+    --border: #0a2a33;
+    --border-soft: #062028;
+    --text: #ccc;
+    --muted: #667;
+    --cyan: #5fa8b8;
+    --cyan-bright: #6ab8c8;
+    --cyan-dim: #4d8a98;
+    --yes: #b8a05f;
+    --no:  #b8585f;
+    --rule: #003344;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #000;
-    color: #5fa8b8;
+    background: var(--bg);
+    color: var(--text);
     font-family: 'Courier New', monospace;
     line-height: 1.7;
-    padding: 40px 20px 80px;
+    padding: 48px 20px 80px;
   }
 
   .page {
-    max-width: 700px;
+    max-width: 760px;
     margin: 0 auto;
   }
 
   a {
-    color: #5fa8b8;
+    color: var(--cyan);
     text-decoration: none;
-    border-bottom: 1px solid #005577;
-    transition: border-color 0.2s;
+    border-bottom: 1px solid var(--rule);
+    transition: border-color 0.2s, color 0.2s;
   }
 
   a:hover {
-    border-bottom-color: #5fa8b8;
+    color: var(--cyan-bright);
+    border-bottom-color: var(--cyan);
   }
 
   .back {
     display: inline-block;
-    margin-bottom: 32px;
+    margin-bottom: 40px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cyan-dim);
+    border: none;
+  }
+
+  .back:hover { color: var(--cyan); }
+
+  /* ── Title block ───────────────────────────────── */
+  .title {
+    margin-bottom: 56px;
+  }
+
+  h1 {
+    font-size: 30px;
+    letter-spacing: 8px;
+    color: var(--cyan);
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    line-height: 1.6;
+  }
+
+  /* ── Sections ──────────────────────────────────── */
+  section {
+    margin-top: 56px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-num {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--cyan-dim);
+  }
+
+  h2 {
+    font-size: 17px;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
+
+  h3 {
     font-size: 13px;
+    color: var(--cyan-dim);
+    margin-top: 28px;
+    margin-bottom: 10px;
     letter-spacing: 2px;
     text-transform: uppercase;
   }
 
-  h1 {
-    font-size: 28px;
-    letter-spacing: 6px;
-    margin-bottom: 8px;
-    color: #5fa8b8;
-  }
-
-  .subtitle {
-    font-size: 13px;
-    color: #667;
-    margin-bottom: 48px;
-    letter-spacing: 1px;
-  }
-
-  h2 {
-    font-size: 18px;
-    letter-spacing: 3px;
-    color: #5fa8b8;
-    margin-top: 48px;
-    margin-bottom: 16px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid #003344;
-  }
-
-  h3 {
-    font-size: 15px;
-    color: #4d8a98;
-    margin-top: 28px;
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-  }
-
-  p {
-    margin-bottom: 14px;
-    color: #ccc;
-  }
+  p { margin-bottom: 14px; }
 
   ul, ol {
     margin-bottom: 14px;
-    padding-left: 24px;
-    color: #ccc;
+    padding-left: 22px;
   }
 
-  li {
-    margin-bottom: 6px;
+  li { margin-bottom: 6px; }
+
+  strong {
+    color: var(--cyan);
+    font-weight: normal;
   }
 
+  /* ── Code ──────────────────────────────────────── */
   code {
-    background: #0a1a1f;
+    background: var(--panel-2);
     padding: 2px 6px;
     border-radius: 3px;
-    font-size: 14px;
-    color: #6ab8c8;
+    font-size: 13px;
+    color: var(--cyan-bright);
   }
 
   pre {
-    background: #060e12;
-    border: 1px solid #0a2a33;
-    border-radius: 4px;
-    padding: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--cyan-dim);
+    border-radius: 0;
+    padding: 14px 16px;
     overflow-x: auto;
-    margin-bottom: 16px;
+    margin: 12px 0 16px;
     font-size: 13px;
     line-height: 1.5;
-    color: #5fa8b8;
+    color: var(--cyan);
   }
 
   pre code {
     background: none;
     padding: 0;
+    color: inherit;
   }
 
-  .katex { color: #6ab8c8; }
-  .katex-display { margin: 20px 0; overflow-x: auto; overflow-y: hidden; }
-
-  hr {
-    border: none;
-    border-top: 1px solid #0a2a33;
-    margin: 40px 0;
+  /* ── KaTeX ─────────────────────────────────────── */
+  .katex { color: var(--cyan-bright); font-size: 1em; }
+  .katex-display {
+    margin: 18px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px 0;
   }
 
-  .footer {
-    margin-top: 60px;
-    padding-top: 20px;
-    border-top: 1px solid #0a2a33;
+  /* ── State cards (grid of 3) ───────────────────── */
+  .state-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-top-width: 2px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.012);
+  }
+
+  .card.neutral { border-top-color: var(--cyan); }
+  .card.yes     { border-top-color: var(--yes); }
+  .card.no      { border-top-color: var(--no); }
+
+  .card-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .card.neutral .card-title { color: var(--cyan); }
+  .card.yes     .card-title { color: var(--yes); }
+  .card.no      .card-title { color: var(--no); }
+
+  .vef {
+    display: flex;
+    gap: 12px;
     font-size: 12px;
-    color: #004455;
-    letter-spacing: 1px;
+    color: var(--text);
   }
 
-  strong {
-    color: #5fa8b8;
+  .vef span b {
+    color: var(--cyan-dim);
+    font-weight: normal;
+    margin-right: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .state-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Tables ────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    color: var(--cyan-dim);
+    font-weight: normal;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 11px;
+  }
+
+  td { color: var(--text); }
+
+  td.num, th.num { text-align: center; }
+
+  /* ── Callouts ──────────────────────────────────── */
+  .note {
+    border-left: 2px solid var(--cyan-dim);
+    background: rgba(95, 168, 184, 0.04);
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .note-label {
+    color: var(--cyan-dim);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  /* ── Pills ─────────────────────────────────────── */
+  .pill {
+    display: inline-block;
+    padding: 1px 8px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border: 1px solid;
+    margin-right: 4px;
+  }
+
+  .pill.neutral { color: var(--cyan); border-color: var(--cyan-dim); }
+  .pill.yes     { color: var(--yes);  border-color: #5e5230; }
+  .pill.no      { color: var(--no);   border-color: #5e3033; }
+
+  /* ── Footer ────────────────────────────────────── */
+  .footer {
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: #2a4a55;
+    letter-spacing: 2px;
+    text-align: center;
   }
 </style>
 </head>
@@ -148,240 +305,296 @@
 
 <a href="index.html" class="back">&larr; Back to Bit</a>
 
-<h1>MATHEMATICS OF BIT</h1>
-<p class="subtitle">Geometric and computational foundations of the Bit character from TRON (1982)</p>
+<div class="title">
+  <h1>MATHEMATICS OF BIT</h1>
+  <div class="subtitle">Geometry, animation, and rendering of the Bit character from TRON (1982).</div>
+</div>
 
-<!-- ────────────────────────────────────────────── -->
-<h2>1. Binary State Machine</h2>
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>State Machine</h2>
+  </div>
 
-<p>Bit is modeled as a finite state machine with three states:</p>
+  <p>Bit is a finite state machine over three states:</p>
 
-$$S \in \{\text{neutral},\; \text{yes},\; \text{no}\}$$
+  $$S \in \{S_N,\; S_Y,\; S_{\bar N}\} \quad \text{(neutral, yes, no)}$$
 
-<p>The neutral state is the resting configuration. External input drives transitions to the yes or no state, and after a timeout (1500 ms), the machine returns to neutral:</p>
+  <div class="state-grid">
+    <div class="card neutral">
+      <div class="card-label">Neutral</div>
+      <div class="card-title">Cumulated icosahedron</div>
+      <div class="vef">
+        <span><b>V</b>32</span><span><b>E</b>90</span><span><b>F</b>60</span>
+      </div>
+    </div>
+    <div class="card yes">
+      <div class="card-label">Yes</div>
+      <div class="card-title">Regular octahedron</div>
+      <div class="vef">
+        <span><b>V</b>6</span><span><b>E</b>12</span><span><b>F</b>8</span>
+      </div>
+    </div>
+    <div class="card no">
+      <div class="card-label">No</div>
+      <div class="card-title">Cumulated dodecahedron</div>
+      <div class="vef">
+        <span><b>V</b>32</span><span><b>E</b>90</span><span><b>F</b>60</span>
+      </div>
+    </div>
+  </div>
 
-$$\delta(S_{\text{neutral}}, I_{\text{yes}}) = S_{\text{yes}}$$
-$$\delta(S_{\text{neutral}}, I_{\text{no}}) = S_{\text{no}}$$
-$$\delta(S_{\text{yes}}, \tau) = S_{\text{neutral}}$$
-$$\delta(S_{\text{no}}, \tau) = S_{\text{neutral}}$$
+  <h3>Transition function</h3>
 
-<p>where $\tau$ represents the timeout event. Each state maps to a distinct polyhedron and color:</p>
+  <table>
+    <thead><tr><th>From</th><th>Input</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>any state</td><td>yes (button / Y key)</td><td><span class="pill yes">yes</span></td></tr>
+      <tr><td>any state</td><td>no (button / N key)</td><td><span class="pill no">no</span></td></tr>
+      <tr><td>any state</td><td>random (canvas click / Space)</td><td>yes or no, $p = 0.5$</td></tr>
+      <tr><td><span class="pill yes">yes</span> / <span class="pill no">no</span></td><td>timeout $\tau = 1500$ ms</td><td><span class="pill neutral">neutral</span></td></tr>
+      <tr><td>any state</td><td>excite (button / E key)</td><td>5 random transitions, 440 ms apart</td></tr>
+    </tbody>
+  </table>
 
-<ul>
-  <li><strong>Neutral</strong> -- Stellated Icosahedron, cyan (#5fa8b8)</li>
-  <li><strong>Yes</strong> -- Regular Octahedron, gold (#ffdd00)</li>
-  <li><strong>No</strong> -- Stellated Dodecahedron, red (#ff3300)</li>
-</ul>
+  <p>The neutral state is the resting configuration. New input always preempts an in-flight response, so transitions between yes and no can occur directly.</p>
+</section>
 
-<!-- ────────────────────────────────────────────── -->
-<h2>2. The Golden Ratio</h2>
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>The Golden Ratio</h2>
+  </div>
 
-<p>The golden ratio appears throughout the geometry of both the icosahedron and dodecahedron:</p>
+  <p>Both the icosahedron and the dodecahedron are coordinated by the golden ratio:</p>
 
-$$\varphi = \frac{1 + \sqrt{5}}{2} \approx 1.618033989$$
+  $$\varphi = \frac{1 + \sqrt{5}}{2} \approx 1.6180339887$$
 
-<p>The vertices of a regular icosahedron lie at cyclic permutations of:</p>
+  <h3>Icosahedron vertices (12)</h3>
+  <p>Cyclic permutations of:</p>
+  $$(0,\; \pm 1,\; \pm \varphi)$$
 
-$$(0,\; \pm 1,\; \pm \varphi)$$
+  <h3>Dodecahedron vertices (20)</h3>
+  $$(\pm 1, \pm 1, \pm 1), \quad (0, \pm \varphi^{-1}, \pm \varphi), \quad (\pm \varphi^{-1}, \pm \varphi, 0), \quad (\pm \varphi, 0, \pm \varphi^{-1})$$
 
-<p>The vertices of a regular dodecahedron lie at:</p>
+  <div class="note">
+    <div class="note-label">Implementation</div>
+    Three.js's <code>IcosahedronGeometry</code> and <code>DodecahedronGeometry</code> handle the $\varphi$-based coordinates internally; the implementation only consumes the resulting vertex buffers.
+  </div>
+</section>
 
-$$(\pm 1, \pm 1, \pm 1), \quad (0, \pm \varphi^{-1}, \pm \varphi), \quad (\pm \varphi^{-1}, \pm \varphi, 0), \quad (\pm \varphi, 0, \pm \varphi^{-1})$$
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Neutral &mdash; Cumulated Icosahedron</h2>
+  </div>
 
-<p>In the implementation, $\varphi$ is computed directly:</p>
+  <p>The neutral form is a <strong>face-cumulation</strong> of the regular icosahedron: a pyramid is raised on every triangular face. (Colloquially &ldquo;stellated,&rdquo; though the classical stellations of the icosahedron use larger, non-arbitrary apex heights.)</p>
 
-<pre><code>var PHI = (1 + Math.sqrt(5)) / 2;</code></pre>
+  <h3>Construction</h3>
 
-<!-- ────────────────────────────────────────────── -->
-<h2>3. Stellated Icosahedron (Neutral)</h2>
+  <ol>
+    <li>Start with <code>THREE.IcosahedronGeometry(1, 0)</code> &mdash; 12 vertices, 20 equilateral faces.</li>
+    <li>Deduplicate vertices: positions are rounded to 5 decimals and collapsed through a hash map.</li>
+    <li>For each face $(\vec{v}_1, \vec{v}_2, \vec{v}_3)$, compute:
+      <ul>
+        <li>Centroid: $\vec{c} = \tfrac{1}{3}(\vec{v}_1 + \vec{v}_2 + \vec{v}_3)$</li>
+        <li>Outward normal: $\hat{n} = \widehat{(\vec{v}_2 - \vec{v}_1) \times (\vec{v}_3 - \vec{v}_1)}$, negated if $\hat{n} \cdot \vec{c} < 0$</li>
+        <li>Apex: $\vec{a} = \vec{c} + h\,\hat{n}$, where $h = 0.3$</li>
+      </ul>
+    </li>
+    <li>Replace each face with three triangles: $(\vec{v}_1, \vec{v}_2, \vec{a})$, $(\vec{v}_2, \vec{v}_3, \vec{a})$, $(\vec{v}_3, \vec{v}_1, \vec{a})$.</li>
+  </ol>
 
-<p>The neutral geometry is constructed by stellating a regular icosahedron -- raising a spike from each triangular face.</p>
+  <p>Result: $20 \times 3 = 60$ triangular faces, packed into a <code>Float32Array</code> on a <code>BufferGeometry</code>.</p>
+</section>
 
-<h3>Construction</h3>
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Yes &mdash; Regular Octahedron</h2>
+  </div>
 
-<ol>
-  <li>Begin with <code>THREE.IcosahedronGeometry(1, 0)</code>, which produces 12 vertices and 20 equilateral triangular faces.</li>
-  <li>Extract unique vertices by deduplication. Each vertex position is rounded to 5 decimal places to form a key string, and duplicates are collapsed via a hash map.</li>
-  <li>For each triangular face with vertices $\vec{v}_1, \vec{v}_2, \vec{v}_3$:
-    <ul>
-      <li>Compute the centroid: $\vec{c} = \dfrac{\vec{v}_1 + \vec{v}_2 + \vec{v}_3}{3}$</li>
-      <li>Compute the face normal via cross product: $\vec{n} = (\vec{v}_2 - \vec{v}_1) \times (\vec{v}_3 - \vec{v}_1)$, then normalize.</li>
-      <li>Ensure the normal points outward: if $\vec{n} \cdot \vec{c} < 0$, negate $\vec{n}$.</li>
-      <li>Place the spike apex at: $\vec{a} = \vec{c} + 0.3 \cdot \hat{n}$</li>
-    </ul>
-  </li>
-  <li>Replace each original triangle with three new triangles: $(\vec{v}_1, \vec{v}_2, \vec{a})$, $(\vec{v}_2, \vec{v}_3, \vec{a})$, $(\vec{v}_3, \vec{v}_1, \vec{a})$.</li>
-</ol>
+  <p>The yes form is the simplest of the three &mdash; a Platonic solid with no embellishment:</p>
 
-<p>The result: 20 faces $\times$ 3 = <strong>60 triangular faces</strong>, stored as a raw <code>Float32Array</code> in a Three.js <code>BufferGeometry</code>.</p>
+  <pre><code>new THREE.OctahedronGeometry(1.2, 0)</code></pre>
 
-<!-- ────────────────────────────────────────────── -->
-<h2>4. Regular Octahedron (Yes)</h2>
+  <ul>
+    <li><strong>Vertices</strong>: 6, at $(\pm 1.2, 0, 0)$, $(0, \pm 1.2, 0)$, $(0, 0, \pm 1.2)$</li>
+    <li><strong>Faces</strong>: 8 equilateral triangles</li>
+    <li><strong>Edges</strong>: 12</li>
+    <li><strong>Symmetry group</strong>: $O_h$, order 48</li>
+  </ul>
 
-<p>The yes state uses a regular octahedron, the simplest of the three geometries:</p>
+  <p>Euler characteristic:</p>
 
-<pre><code>new THREE.OctahedronGeometry(1.2, 0)</code></pre>
+  $$V - E + F = 6 - 12 + 8 = 2 \quad \checkmark$$
 
-<ul>
-  <li><strong>Vertices</strong>: 6, at $(\pm 1.2, 0, 0)$, $(0, \pm 1.2, 0)$, $(0, 0, \pm 1.2)$</li>
-  <li><strong>Faces</strong>: 8 equilateral triangles</li>
-  <li><strong>Edges</strong>: 12</li>
-  <li><strong>Symmetry group</strong>: $O_h$ (full octahedral symmetry, order 48)</li>
-</ul>
+  <p>Its smooth, low-poly silhouette &mdash; rounded against the spiky neutral and no forms &mdash; reads as affirmative.</p>
+</section>
 
-<p>The octahedron is a Platonic solid -- one of only five convex regular polyhedra. Its Euler characteristic confirms:</p>
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>No &mdash; Cumulated Dodecahedron</h2>
+  </div>
 
-$$V - E + F = 6 - 12 + 8 = 2$$
+  <p>The no form cumulates each of the dodecahedron's 12 pentagonal faces with a tall, varied spike.</p>
 
-<p>The smooth, rounded feel of the octahedron (relative to the spiky alternatives) makes it the natural choice for the affirmative state.</p>
+  <h3>Reconstructing pentagons</h3>
 
-<!-- ────────────────────────────────────────────── -->
-<h2>5. Stellated Dodecahedron (No)</h2>
+  <p>Three.js triangulates each pentagonal face into sub-triangles. The construction first groups them back into pentagons by testing pairs of triangles:</p>
 
-<p>The no state is the most aggressive geometry: a stellated dodecahedron with randomized spike heights.</p>
+  <ul>
+    <li>Normals nearly parallel: $\hat{n}_1 \cdot \hat{n}_2 > 0.95$</li>
+    <li>Centroids close: $\lVert \vec{c}_1 - \vec{c}_2 \rVert < 1.2$</li>
+  </ul>
 
-<h3>Construction</h3>
+  <h3>Apex placement</h3>
 
-<ol>
-  <li>Begin with <code>THREE.DodecahedronGeometry(1, 0)</code>. Three.js internally triangulates each of the 12 pentagonal faces, producing a set of triangles.</li>
-  <li><strong>Reconstruct pentagonal faces</strong>: group the triangles back into their parent pentagons. Two triangles belong to the same pentagon if:
-    <ul>
-      <li>Their normals are nearly parallel: $\vec{n}_1 \cdot \vec{n}_2 > 0.95$</li>
-      <li>Their centroids are close: $\|\vec{c}_1 - \vec{c}_2\| < 1.2$</li>
-    </ul>
-  </li>
-  <li>For each pentagonal group $g$:
-    <ul>
-      <li>Compute the face center $\vec{c}_g$ as the average of all vertices in the group.</li>
-      <li>Compute the outward normal $\hat{n}_g$ from the first triangle; negate if $\hat{n}_g \cdot \vec{c}_g < 0$.</li>
-      <li>Apply a seeded random variation to the spike height.</li>
-    </ul>
-  </li>
-  <li>For each sub-triangle in the group, create three spike triangles toward the apex $\vec{a} = \vec{c}_g + h \cdot \hat{n}_g$.</li>
-</ol>
+  <p>For each pentagonal group $g$:</p>
 
-<h3>Seeded Randomness</h3>
+  <ol>
+    <li>Average all vertex positions to get the pentagon center $\vec{c}_g$.</li>
+    <li>Take the outward normal $\hat{n}_g$ from the first sub-triangle (negate if $\hat{n}_g \cdot \vec{c}_g < 0$).</li>
+    <li>Sample a spike height from the seeded hash; build spikes from each sub-triangle to the apex.</li>
+  </ol>
 
-<p>Spike heights vary per face using a deterministic pseudo-random function (a GPU hash trick):</p>
+  <h3>Spike heights</h3>
 
-<pre><code>function seededRandom(seed) {
-    var x = Math.sin(seed * 127.1 + seed * 311.7) * 43758.5453;
-    return x - Math.floor(x);
+  $$h_g = h_0 \,(0.8 + r_g), \qquad h_0 = 1.8, \quad r_g \in [0, 1)$$
+
+  $$h_g \in [1.44,\; 3.24]$$
+
+  <p>where $r_g$ is a deterministic pseudo-random value seeded per face by $7g + 3$:</p>
+
+  <pre><code>function seededRandom(seed) {
+  var x = Math.sin(seed * 127.1 + seed * 311.7) * 43758.5453;
+  return x - Math.floor(x);
 }</code></pre>
 
-<p>The seed for face $g$ is $7g + 3$. This produces a value in $[0, 1)$, which scales the spike height:</p>
+  <div class="note">
+    <div class="note-label">Note</div>
+    This is a degenerate version of the canonical Quilez GPU hash. Because both terms multiply the same <code>seed</code>, it algebraically collapses to $\sin(438.8\,s) \cdot 43758.5453$ &mdash; a 1D hash. The true trick takes a 2D input: <code>dot(uv, vec2(127.1, 311.7))</code>. For a single-input hash this is fine; the values are uncorrelated enough for spike-height variation.
+  </div>
+</section>
 
-$$h = 1.8 \times (0.8 + r \times 1.0)$$
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Animation</h2>
+  </div>
 
-<p>where $r = \text{seededRandom}(7g + 3)$. The effective range is:</p>
+  <h3>Rotation</h3>
 
-$$h \in [1.44,\; 3.24]$$
+  <p>Each frame, the mesh advances on two axes:</p>
 
-<p>This variation gives the no form its irregular, threatening silhouette.</p>
+  $$\theta_y \mathrel{+}= \omega, \qquad \theta_x \mathrel{+}= 0.4\,\omega$$
 
-<!-- ────────────────────────────────────────────── -->
-<h2>6. Animation Mathematics</h2>
+  <table>
+    <thead><tr><th>State</th><th class="num">$\omega$ (rad/frame)</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill neutral">neutral</span></td><td class="num">0.008</td></tr>
+      <tr><td><span class="pill yes">yes</span></td><td class="num">0.025</td></tr>
+      <tr><td><span class="pill no">no</span></td><td class="num">0.015</td></tr>
+    </tbody>
+  </table>
 
-<h3>Rotation</h3>
+  <p>The $y$ axis rotates 2.5&times; faster than the $x$ axis, producing an asymmetric tumble.</p>
 
-<p>Each frame, the mesh rotates around two axes at rates that depend on the current state:</p>
+  <h3>Float</h3>
 
-$$\theta_y(t+1) = \theta_y(t) + \omega$$
-$$\theta_x(t+1) = \theta_x(t) + 0.4\omega$$
+  <p>A sinusoidal vertical displacement gives Bit a hovering quality:</p>
 
-<p>where $\omega$ is the per-frame angular speed:</p>
+  $$y(t) = 0.15 \sin(1.5\,t)$$
 
-<ul>
-  <li>Neutral: $\omega = 0.008$ rad/frame</li>
-  <li>Yes: $\omega = 0.025$ rad/frame</li>
-  <li>No: $\omega = 0.015$ rad/frame</li>
-</ul>
+  <p>Amplitude $0.15$ units, period $T = \tfrac{2\pi}{1.5} \approx 4.19$ s, with $t$ from a <code>THREE.Clock</code>.</p>
+</section>
 
-<p>The y-axis rotates 2.5x faster than the x-axis (ratio $1 : 0.4$), creating an asymmetric tumble.</p>
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Dual Polyhedra</h2>
+  </div>
 
-<h3>Floating</h3>
+  <p>The icosahedron and dodecahedron are <strong>dual polyhedra</strong>: faces and vertices of one correspond to vertices and faces of the other, with identical edge count and shared symmetry group $I_h$ (order 120).</p>
 
-<p>A sinusoidal vertical displacement gives Bit a hovering quality:</p>
+  <table>
+    <thead>
+      <tr><th>Solid</th><th class="num">V</th><th class="num">E</th><th class="num">F</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Icosahedron</td><td class="num">12</td><td class="num">30</td><td class="num">20</td></tr>
+      <tr><td>Dodecahedron</td><td class="num">20</td><td class="num">30</td><td class="num">12</td></tr>
+    </tbody>
+  </table>
 
-$$y(t) = 0.15 \sin(1.5t)$$
+  <p>Bit oscillates between cumulations of these duals: neutral cumulates the icosahedron, no cumulates the dodecahedron. The binary character literally moves between two dual geometric forms.</p>
+</section>
 
-<p>where $t$ is the elapsed time in seconds from a <code>THREE.Clock</code>. The amplitude is 0.15 units and the period is $\frac{2\pi}{1.5} \approx 4.19$ seconds.</p>
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Information</h2>
+  </div>
 
-<!-- ────────────────────────────────────────────── -->
-<h2>7. Dual Polyhedra</h2>
+  <p>Bit encodes exactly one bit of Shannon entropy. Under equal-probability yes / no:</p>
 
-<p>The icosahedron and dodecahedron are <strong>dual polyhedra</strong>. Duality means:</p>
+  $$H = -\sum_{i} p_i \log_2 p_i = -\left(\tfrac{1}{2}\log_2 \tfrac{1}{2} + \tfrac{1}{2}\log_2 \tfrac{1}{2}\right) = 1 \text{ bit}$$
 
-<ul>
-  <li>Each face of one corresponds to a vertex of the other.</li>
-  <li>Each vertex of one corresponds to a face of the other.</li>
-  <li>Both share the same edge count (30) and the same symmetry group $I_h$ (order 120).</li>
-</ul>
+  <p>This is the irreducible minimum of meaningful information &mdash; one binary decision &mdash; and Bit is its physical embodiment.</p>
+</section>
 
-<table style="margin: 16px 0; border-collapse: collapse; width: 100%; font-size: 14px;">
-  <tr style="border-bottom: 1px solid #003344;">
-    <th style="text-align: left; padding: 6px 12px;"></th>
-    <th style="text-align: center; padding: 6px 12px;">V</th>
-    <th style="text-align: center; padding: 6px 12px;">E</th>
-    <th style="text-align: center; padding: 6px 12px;">F</th>
-  </tr>
-  <tr>
-    <td style="padding: 6px 12px;">Icosahedron</td>
-    <td style="text-align: center; padding: 6px 12px;">12</td>
-    <td style="text-align: center; padding: 6px 12px;">30</td>
-    <td style="text-align: center; padding: 6px 12px;">20</td>
-  </tr>
-  <tr>
-    <td style="padding: 6px 12px;">Dodecahedron</td>
-    <td style="text-align: center; padding: 6px 12px;">20</td>
-    <td style="text-align: center; padding: 6px 12px;">30</td>
-    <td style="text-align: center; padding: 6px 12px;">12</td>
-  </tr>
-</table>
+<!-- ─────────────────────────────────────────────── -->
+<section>
+  <div class="section-head">
+    <span class="section-num">09</span>
+    <h2>Lighting &amp; Rendering</h2>
+  </div>
 
-<p>Bit morphs between stellations of these duals: the neutral state stellates the icosahedron, the no state stellates the dodecahedron. The binary character literally oscillates between dual geometric forms.</p>
+  <p>The scene uses Phong shading with flat interpolation, producing the crystalline faceted look. Four light sources:</p>
 
-<!-- ────────────────────────────────────────────── -->
-<h2>8. Information Theory</h2>
+  <table>
+    <thead>
+      <tr><th>Source</th><th>Color</th><th class="num">Intensity</th><th>Position</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Ambient</td><td>#404040</td><td class="num">0.4</td><td>&mdash;</td></tr>
+      <tr><td>Main directional</td><td>#ffffff</td><td class="num">1.0</td><td>$(2, 3, 2)$</td></tr>
+      <tr><td>Fill directional</td><td>#4488cc</td><td class="num">0.3</td><td>$(-2, -1, -2)$</td></tr>
+      <tr><td>Rim point</td><td>#00ddff</td><td class="num">0.5</td><td>$(0, 2, 4)$, range 20</td></tr>
+    </tbody>
+  </table>
 
-<p>From an information-theoretic perspective, Bit encodes exactly one bit of Shannon entropy. Assuming equal probability of yes and no:</p>
+  <h3>Material</h3>
 
-$$H = -\sum_{i} p_i \log_2 p_i = -(0.5 \log_2 0.5 + 0.5 \log_2 0.5) = 1 \text{ bit}$$
+  <p><code>MeshPhongMaterial</code> with:</p>
 
-<p>This is the irreducible minimum of meaningful information: a single binary decision. The character is the physical (digital) embodiment of this quantity.</p>
+  <ul>
+    <li><code>flatShading: true</code> &mdash; per-face normals (no smoothing across vertices)</li>
+    <li><code>shininess: 80</code> &mdash; moderately sharp specular highlights</li>
+    <li><code>opacity: 0.92</code> &mdash; slight translucency for a holographic feel</li>
+    <li><code>side: DoubleSide</code> &mdash; both faces of every triangle rendered</li>
+  </ul>
 
-<!-- ────────────────────────────────────────────── -->
-<h2>9. Lighting Model</h2>
+  <h3>Phong reflection</h3>
 
-<p>The scene uses Phong shading with flat interpolation, creating the crystalline faceted look. The lighting rig consists of four sources:</p>
+  <p>Per-fragment color:</p>
 
-<ol>
-  <li><strong>Ambient light</strong> -- color #404040, intensity 0.4. Provides baseline illumination so no face is fully black.</li>
-  <li><strong>Main directional light</strong> -- white, intensity 1.0, positioned at $(2, 3, 2)$. The primary light source.</li>
-  <li><strong>Fill directional light</strong> -- blue-tinted (#4488cc), intensity 0.3, positioned at $(-2, -1, -2)$. Softens shadows on the opposite side.</li>
-  <li><strong>Rim point light</strong> -- cyan (#5fa8b8), intensity 0.5, range 20, positioned at $(0, 2, 4)$. Adds a TRON-style edge glow.</li>
-</ol>
+  $$I = k_a I_a + \sum_{j} \left[ k_d (\hat{n} \cdot \hat{l}_j) I_j + k_s (\hat{r}_j \cdot \hat{v})^{\alpha} I_j \right]$$
 
-<p>The material is <code>MeshPhongMaterial</code> with:</p>
+  <p>with $k_a, k_d, k_s$ the ambient / diffuse / specular coefficients, $\hat{n}$ the face normal, $\hat{l}_j$ the light direction, $\hat{r}_j$ the reflection vector, $\hat{v}$ the view direction, and $\alpha = 80$ the shininess exponent.</p>
+</section>
 
-<ul>
-  <li><code>flatShading: true</code> -- normals are per-face, not interpolated across vertices</li>
-  <li><code>shininess: 80</code> -- moderately sharp specular highlights</li>
-  <li><code>opacity: 0.92</code> -- slight translucency for a digital/holographic feel</li>
-  <li><code>side: DoubleSide</code> -- both faces of each triangle are rendered</li>
-</ul>
-
-<p>The Phong reflection model computes the color at each fragment as:</p>
-
-$$I = k_a I_a + \sum_j \left[ k_d (\hat{n} \cdot \hat{l}_j) I_j + k_s (\hat{r}_j \cdot \hat{v})^{\alpha} I_j \right]$$
-
-<p>where $k_a$ is the ambient coefficient, $k_d$ the diffuse, $k_s$ the specular, $\hat{n}$ the face normal, $\hat{l}_j$ the light direction, $\hat{r}_j$ the reflection vector, $\hat{v}$ the view direction, and $\alpha = 80$ the shininess exponent.</p>
-
-<!-- ────────────────────────────────────────────── -->
-
-<div class="footer">
-  End of line.
-</div>
+<div class="footer">END OF LINE</div>
 
 </div>
 </body>
