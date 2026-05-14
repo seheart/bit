@@ -18,7 +18,7 @@
 
   body {
     background: #000;
-    color: #00ddff;
+    color: #5fa8b8;
     font-family: 'Courier New', monospace;
     line-height: 1.7;
     padding: 40px 20px 80px;
@@ -30,14 +30,14 @@
   }
 
   a {
-    color: #00ddff;
+    color: #5fa8b8;
     text-decoration: none;
     border-bottom: 1px solid #005577;
     transition: border-color 0.2s;
   }
 
   a:hover {
-    border-bottom-color: #00ddff;
+    border-bottom-color: #5fa8b8;
   }
 
   .back {
@@ -52,8 +52,7 @@
     font-size: 28px;
     letter-spacing: 6px;
     margin-bottom: 8px;
-    color: #00ddff;
-    text-shadow: 0 0 12px #00ddff, 0 0 24px #005577;
+    color: #5fa8b8;
   }
 
   .subtitle {
@@ -66,7 +65,7 @@
   h2 {
     font-size: 18px;
     letter-spacing: 3px;
-    color: #00ddff;
+    color: #5fa8b8;
     margin-top: 48px;
     margin-bottom: 16px;
     padding-bottom: 6px;
@@ -75,7 +74,7 @@
 
   h3 {
     font-size: 15px;
-    color: #00bbdd;
+    color: #4d8a98;
     margin-top: 28px;
     margin-bottom: 10px;
     letter-spacing: 1px;
@@ -101,7 +100,7 @@
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 14px;
-    color: #00eeff;
+    color: #6ab8c8;
   }
 
   pre {
@@ -113,7 +112,7 @@
     margin-bottom: 16px;
     font-size: 13px;
     line-height: 1.5;
-    color: #00ddff;
+    color: #5fa8b8;
   }
 
   pre code {
@@ -121,7 +120,7 @@
     padding: 0;
   }
 
-  .katex { color: #00eeff; }
+  .katex { color: #6ab8c8; }
   .katex-display { margin: 20px 0; overflow-x: auto; overflow-y: hidden; }
 
   hr {
@@ -140,7 +139,7 @@
   }
 
   strong {
-    color: #00ddff;
+    color: #5fa8b8;
   }
 </style>
 </head>
@@ -169,7 +168,7 @@ $$\delta(S_{\text{no}}, \tau) = S_{\text{neutral}}$$
 <p>where $\tau$ represents the timeout event. Each state maps to a distinct polyhedron and color:</p>
 
 <ul>
-  <li><strong>Neutral</strong> -- Stellated Icosahedron, cyan (#00ddff)</li>
+  <li><strong>Neutral</strong> -- Stellated Icosahedron, cyan (#5fa8b8)</li>
   <li><strong>Yes</strong> -- Regular Octahedron, gold (#ffdd00)</li>
   <li><strong>No</strong> -- Stellated Dodecahedron, red (#ff3300)</li>
 </ul>
@@ -360,7 +359,7 @@ $$H = -\sum_{i} p_i \log_2 p_i = -(0.5 \log_2 0.5 + 0.5 \log_2 0.5) = 1 \text{ b
   <li><strong>Ambient light</strong> -- color #404040, intensity 0.4. Provides baseline illumination so no face is fully black.</li>
   <li><strong>Main directional light</strong> -- white, intensity 1.0, positioned at $(2, 3, 2)$. The primary light source.</li>
   <li><strong>Fill directional light</strong> -- blue-tinted (#4488cc), intensity 0.3, positioned at $(-2, -1, -2)$. Softens shadows on the opposite side.</li>
-  <li><strong>Rim point light</strong> -- cyan (#00ddff), intensity 0.5, range 20, positioned at $(0, 2, 4)$. Adds a TRON-style edge glow.</li>
+  <li><strong>Rim point light</strong> -- cyan (#5fa8b8), intensity 0.5, range 20, positioned at $(0, 2, 4)$. Adds a TRON-style edge glow.</li>
 </ol>
 
 <p>The material is <code>MeshPhongMaterial</code> with:</p>

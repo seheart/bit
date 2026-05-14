@@ -43,7 +43,6 @@
     font-size: 36px;
     letter-spacing: 12px;
     color: #00ddff;
-    text-shadow: 0 0 16px #00ddff, 0 0 32px #005577;
     pointer-events: auto;
   }
 
@@ -63,76 +62,13 @@
     right: 0;
     z-index: 2;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
+    justify-content: center;
     padding: 0 24px 28px;
     pointer-events: none;
   }
 
   .bottom-panel > * {
     pointer-events: auto;
-  }
-
-  /* Input row */
-  .ask-row {
-    display: flex;
-    gap: 0;
-    width: 100%;
-    max-width: 560px;
-  }
-
-  #questionInput {
-    flex: 1;
-    background: rgba(0,0,0,0.7);
-    border: 1px solid #224455;
-    border-right: none;
-    color: #fff;
-    padding: 14px 18px;
-    font-family: 'Courier New', monospace;
-    font-size: 16px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  #questionInput::placeholder {
-    color: #33555f;
-    font-style: italic;
-  }
-
-  #questionInput:focus {
-    border-color: #00ddff;
-    box-shadow: 0 0 16px rgba(0,221,255,0.15);
-  }
-
-  #questionInput:focus + #btnSubmit {
-    border-color: #00ddff;
-  }
-
-  #btnSubmit {
-    background: rgba(0,221,255,0.08);
-    border: 1px solid #224455;
-    color: #00ddff;
-    padding: 14px 22px;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-
-  #btnSubmit:hover {
-    background: rgba(0,221,255,0.18);
-    box-shadow: 0 0 14px rgba(0,221,255,0.3);
-  }
-
-  #btnSubmit:disabled {
-    opacity: 0.25;
-    cursor: default;
-    box-shadow: none;
   }
 
   /* Button row */
@@ -177,32 +113,11 @@
     box-shadow: 0 0 8px rgba(255,221,0,0.2);
   }
 
-  .ctrl-btn.speak {
-    border-color: #1a3344;
-    color: #447788;
-  }
-
-  .ctrl-btn.speak:hover {
-    border-color: #00ddff;
-    color: #00ddff;
-  }
-
-  .ctrl-btn.speak.listening {
-    border-color: #ff3300;
-    color: #ff3300;
-    animation: micPulse 1s ease-in-out infinite;
-  }
-
   .ctrl-sep {
     width: 1px;
     height: 16px;
     background: #1a2a33;
     margin: 0 4px;
-  }
-
-  @keyframes micPulse {
-    0%, 100% { box-shadow: none; }
-    50% { box-shadow: 0 0 12px rgba(255,51,0,0.4); }
   }
 
   /* DOM particles */
@@ -232,13 +147,7 @@
 </div>
 
 <div class="bottom-panel">
-  <div class="ask-row">
-    <input type="text" id="questionInput" placeholder="Ask Bit a question..." autocomplete="off" />
-    <button id="btnSubmit">Ask</button>
-  </div>
   <div class="controls-row">
-    <button class="ctrl-btn speak" id="btnSpeak">Speak</button>
-    <div class="ctrl-sep"></div>
     <button class="ctrl-btn" id="btnAsk">Yes</button>
     <button class="ctrl-btn" id="btnChallenge">No</button>
     <button class="ctrl-btn" id="btnExcite">Excite</button>
@@ -587,15 +496,12 @@
     if (state === STATE_YES) {
       statusEl.textContent = 'YES!';
       statusEl.style.color = '#ffdd00';
-      statusEl.style.textShadow = '0 0 12px #ffdd00, 0 0 24px #aa8800';
     } else if (state === STATE_NO) {
       statusEl.textContent = 'NO!';
       statusEl.style.color = '#ff3300';
-      statusEl.style.textShadow = '0 0 12px #ff3300, 0 0 24px #aa1100';
     } else {
       statusEl.innerHTML = '&nbsp;';
       statusEl.style.color = '#00ddff';
-      statusEl.style.textShadow = 'none';
     }
   }
 
@@ -675,11 +581,6 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.repeat) return;
-    // Don't trigger shortcuts while typing in the input
-    if (document.activeElement === questionInput) {
-      if (e.key === 'Enter') submitQuestion();
-      return;
-    }
     switch (e.key.toLowerCase()) {
       case 'y': respond(STATE_YES, false); break;
       case 'n': respond(STATE_NO, false); break;
@@ -700,162 +601,6 @@
   document.getElementById('btnExcite').addEventListener('click', function () {
     excite();
   });
-
-  // ── AI Decision Maker ─────────────────────────────────────
-
-  var WORKER_URL = 'https://bit-oracle.seheart.workers.dev';
-  var questionInput = document.getElementById('questionInput');
-  var btnSubmit = document.getElementById('btnSubmit');
-  var btnSpeak = document.getElementById('btnSpeak');
-  var isDeliberating = false;
-  var deliberationInterval = null;
-  var deliberationToggle = false;
-
-  function setAskEnabled(enabled) {
-    btnSubmit.disabled = !enabled;
-    questionInput.disabled = !enabled;
-  }
-
-  function startDeliberation() {
-    if (responseTimer) {
-      clearTimeout(responseTimer);
-      responseTimer = null;
-    }
-    isDeliberating = true;
-    deliberationToggle = false;
-    setAskEnabled(false);
-
-    ensureAudioContext();
-
-    deliberationInterval = setInterval(function () {
-      deliberationToggle = !deliberationToggle;
-      var state = deliberationToggle ? STATE_YES : STATE_NO;
-      setMesh(state);
-      updateStatus(state);
-      playSound(state, true);
-    }, 280);
-  }
-
-  function settleDeliberation(finalState) {
-    clearInterval(deliberationInterval);
-    deliberationInterval = null;
-
-    // Brief pause, then commit to the final answer
-    isDeliberating = false;
-    setTimeout(function () {
-      setMesh(finalState);
-      updateStatus(finalState);
-      playSound(finalState, false);
-      spawnParticles(finalState);
-      spawnParticles(finalState);
-
-      responseTimer = setTimeout(function () {
-        setMesh(STATE_NEUTRAL);
-        updateStatus(STATE_NEUTRAL);
-        responseTimer = null;
-      }, 3000);
-
-      setAskEnabled(true);
-    }, 300);
-  }
-
-  function submitQuestion() {
-    var question = questionInput.value.trim();
-    if (!question || isDeliberating || isExcited) return;
-    questionInput.blur();
-    askBit(question);
-  }
-
-  function askBit(question) {
-    startDeliberation();
-
-    fetch(WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: question }),
-    })
-    .then(function (res) { return res.json(); })
-    .then(function (data) {
-      var finalState = (data.answer === 'no') ? STATE_NO : STATE_YES;
-      // Small delay so deliberation runs for at least 1.5s
-      var elapsed = 0;
-      var minTime = 1500;
-      var check = function () {
-        if (elapsed >= minTime) {
-          settleDeliberation(finalState);
-        } else {
-          setTimeout(check, minTime - elapsed);
-          elapsed = minTime;
-        }
-      };
-      check();
-    })
-    .catch(function () {
-      // Fallback: random answer
-      var finalState = Math.random() < 0.5 ? STATE_YES : STATE_NO;
-      settleDeliberation(finalState);
-    });
-  }
-
-  btnSubmit.addEventListener('click', submitQuestion);
-
-  // ── Voice Input ─────────────────────────────────────────────
-
-  var recognition = null;
-  var isListening = false;
-
-  function setupVoice() {
-    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      btnSpeak.style.display = 'none';
-      return;
-    }
-
-    recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = function (event) {
-      var transcript = event.results[0][0].transcript;
-      questionInput.value = transcript;
-      stopListening();
-      askBit(transcript);
-    };
-
-    recognition.onerror = function () {
-      stopListening();
-    };
-
-    recognition.onend = function () {
-      stopListening();
-    };
-  }
-
-  function startListening() {
-    if (!recognition || isDeliberating) return;
-    isListening = true;
-    btnSpeak.classList.add('listening');
-    btnSpeak.textContent = 'Listening...';
-    try { recognition.start(); } catch (_) {}
-  }
-
-  function stopListening() {
-    isListening = false;
-    btnSpeak.classList.remove('listening');
-    btnSpeak.textContent = 'Speak';
-    try { recognition.stop(); } catch (_) {}
-  }
-
-  btnSpeak.addEventListener('click', function () {
-    if (isListening) {
-      stopListening();
-    } else {
-      startListening();
-    }
-  });
-
-  setupVoice();
 
   // ── Animation loop ─────────────────────────────────────────
 
