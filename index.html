@@ -158,8 +158,8 @@
 </div>
 
 <!-- Audio -->
-<audio id="audioYes" preload="auto" src="bit-yes.mp3"></audio>
-<audio id="audioNo" preload="auto" src="bit-no.mp3"></audio>
+<audio id="audioYes" preload="auto" src="audio/bit-yes.mp3"></audio>
+<audio id="audioNo" preload="auto" src="audio/bit-no.mp3"></audio>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -561,10 +561,6 @@
     var count = 0;
 
     function next() {
-      if (count >= EXCITE_COUNT) {
-        isExcited = false;
-        return;
-      }
       count++;
       respond('random', true);
       if (count < EXCITE_COUNT) {

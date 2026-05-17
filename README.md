@@ -20,17 +20,18 @@ An interactive recreation of **Bit**, the geometric character from Disney's TRON
 - **YES** — Octahedron (yellow). 8-face regular octahedron.
 - **NO** — Stellated dodecahedron (red). Pentagonal faces with long aggressive spikes.
 
-See [MATHEMATICS.md](MATHEMATICS.md) for the full geometric and mathematical analysis.
+See [math.html](math.html) for the full geometric and mathematical analysis.
 
 ## Project Structure
 
 ```
 bit/
   index.html          # Single-page app (Three.js r128)
-  bit-yes.mp3         # YES sound from TRON (1982)
-  bit-no.mp3          # NO sound from TRON (1982)
-  MATHEMATICS.md       # Geometric analysis
-  *.webp              # Reference images
+  math.html           # Geometric analysis
+  favicon.svg
+  audio/
+    bit-yes.mp3       # YES sound from TRON (1982)
+    bit-no.mp3        # NO sound from TRON (1982)
 ```
 
 ## Running Locally
