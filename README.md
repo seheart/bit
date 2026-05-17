@@ -1,5 +1,7 @@
 # Bit — Interactive TRON Character
 
+![Bit in neutral state](preview.png)
+
 An interactive recreation of **Bit**, the geometric character from Disney's TRON (1982). Bit can only say "YES" or "NO", morphing between three polyhedral states with authentic movie sounds.
 
 **[Live Demo](https://seheart.github.io/bit/)**
@@ -29,6 +31,7 @@ bit/
   index.html          # Single-page app (Three.js r128)
   math.html           # Geometric analysis
   favicon.svg
+  preview.png         # README screenshot
   audio/
     bit-yes.mp3       # YES sound from TRON (1982)
     bit-no.mp3        # NO sound from TRON (1982)
